@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useMotionValue, useTransform, motion } from "framer-motion";
+import { useMotionValue, useTransform, motion, useScroll } from "framer-motion";
 import { useRef } from "react";
 
 export default function Home() {
@@ -14,7 +14,12 @@ export default function Home() {
   const cursorX = useMotionValue(0);
   const cursorY = useMotionValue(0);
 
-  // useMotionValueEvent(rotateRabbitY, "change", (x) => {
+  const { scrollYProgress } = useScroll({
+    target: aboutMeRef,
+    offset: ["start end", "end end"],
+  });
+
+  // useMotionValueEvent(scrollYProgress, "change", (x) => {
   //   console.log(x);
   // });
 
@@ -47,8 +52,12 @@ export default function Home() {
 
   return (
     <>
-      <div
+      <motion.div
         ref={containerRef}
+        initial={{ filter: "blur(20px)", pointerEvents: "none" }}
+        animate={{ filter: "blur(0px)", pointerEvents: "auto" }}
+        style={{ opacity: useTransform(scrollYProgress, [0.65, 0.1], [0, 1]) }}
+        transition={{ duration: 0.3, delay: 0.2 }}
         onMouseMove={handleMouseMove}
         className="hero-section bg-black relative overflow-hidden h-[100vh] w-full flex flex-col items-center justify-start perspective-deep"
       >
@@ -142,7 +151,7 @@ export default function Home() {
             Contact
           </Button>
         </div>
-      </div>
+      </motion.div>
       <div
         className="w-full h-[100vh] bg-black"
         id="aboutme"
