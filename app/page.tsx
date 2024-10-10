@@ -43,6 +43,18 @@ export default function Home() {
             rotateX: useTransform(cursorY, [-100, 100], [-2, 2]),
             rotateY: useTransform(cursorX, [-100, 100], [5, -5]),
             translateX: useTransform(cursorX, [-100, 100], [-10, 10]),
+            filter: useTransform(
+              cursorX,
+              [-100, -50, 0, 50, 100],
+              [
+                "blur(20px)",
+                "blur(5px)",
+                "blur(0px)",
+                "blur(5px)",
+                "blur(10px)",
+              ]
+            ),
+
             scale: 1.05,
           }}
           className="background z-0 absolute inset-0 m-auto h-full w-full pointer-events-none"
