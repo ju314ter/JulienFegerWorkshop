@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useMotionValue, useTransform, motion } from "framer-motion";
 import { useRef } from "react";
-import Link from "next/link";
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
