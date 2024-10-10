@@ -4,9 +4,14 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useMotionValue, useTransform, motion } from "framer-motion";
 import { useRef } from "react";
+import Link from "next/link";
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const aboutMeRef = useRef<HTMLDivElement>(null);
+  const showCaseRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
+
   const cursorX = useMotionValue(0);
   const cursorY = useMotionValue(0);
 
@@ -29,6 +34,16 @@ export default function Home() {
     // Set the motion values
     cursorX.set(clampedX);
     cursorY.set(clampedY);
+  };
+
+  const handleScrollToAboutMe = () => {
+    aboutMeRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  const handleScrollToShowcase = () => {
+    showCaseRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  const handleScrollToContact = () => {
+    contactRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -107,20 +122,43 @@ export default function Home() {
         </motion.div>
 
         {/* Menu */}
-        <div className="navigation z-20 min-w-[300px] max-w-[1200px] w-[50%] mt-[10vh] flex flex-col gap-10 items-center justify-start">
+        <div className="navigation z-40 min-w-[300px] max-w-[1200px] w-[50%] mt-[10vh] flex flex-col gap-[10vh] items-center justify-start">
           <Button
-            className="w-full"
-            onClick={() => {
-              console.log("click");
-            }}
+            className=" bg-transparent w-full h-24 text-[10rem]"
+            onClick={handleScrollToAboutMe}
           >
             About me
           </Button>
-          <Button className="w-full">Showcase</Button>
-          <Button className="w-full">Contact</Button>
+
+          <Button
+            className="bg-transparent w-full h-24 text-[10rem]"
+            onClick={handleScrollToShowcase}
+          >
+            Showcase
+          </Button>
+          <Button
+            className=" bg-transparent w-full h-24 text-[10rem]"
+            onClick={handleScrollToContact}
+          >
+            Contact
+          </Button>
         </div>
       </div>
-      <div className="w-full h-[100vh] bg-black"></div>
+      <div
+        className="w-full h-[100vh] bg-black"
+        id="aboutme"
+        ref={aboutMeRef}
+      ></div>
+      <div
+        className="w-full h-[100vh] bg-violet-700"
+        id="showcase"
+        ref={showCaseRef}
+      ></div>
+      <div
+        className="w-full h-[100vh] bg-grey-200"
+        id="contact"
+        ref={contactRef}
+      ></div>
     </>
   );
 }
