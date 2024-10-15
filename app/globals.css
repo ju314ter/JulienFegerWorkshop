@@ -161,3 +161,137 @@ body {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   background-color: hsl(267, 50%, 0%);
 }
+
+.embla {
+  max-width: 100%;
+  height: 100%;
+  --slide-height: 100%;
+  --slide-spacing: 1rem;
+  --slide-size: 20%;
+}
+.embla__viewport {
+  height: 90%;
+  overflow: hidden;
+}
+.embla__container {
+  display: flex;
+  touch-action: pan-y pinch-zoom;
+  margin-left: calc(var(--slide-spacing) * -1);
+  height: 100%;
+}
+.embla__slide {
+  transform: translate3d(0, 0, 0);
+  height: 60%;
+  margin-top: auto;
+  margin-bottom: auto;
+  flex: 0 0 var(--slide-size);
+  min-width: 0;
+  padding-left: var(--slide-spacing);
+  filter: blur(2px);
+}
+.embla__slide:hover {
+  filter: blur(0px);
+}
+
+.embla__slide:first-of-type {
+  margin-left: 5vw;
+}
+.embla__slide:last-of-type {
+  margin-right: 5vw;
+}
+
+.embla__slide__number {
+  box-shadow: inset 0 0 0 0.2rem var(--detail-medium-contrast);
+  border-radius: 1.8rem;
+  font-size: 4rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--slide-height);
+  user-select: none;
+  background: grey;
+}
+.embla__controls {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  justify-content: space-between;
+  gap: 1.2rem;
+  height: 10%;
+  color: white;
+}
+.embla__buttons {
+  margin-left: 5vw;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+  align-items: center;
+}
+.embla__button {
+  -webkit-tap-highlight-color: rgba(var(--text-high-contrast-rgb-value), 0.5);
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: transparent;
+  touch-action: manipulation;
+  display: inline-flex;
+  text-decoration: none;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  box-shadow: inset 0 0 0 0.2rem var(--detail-medium-contrast);
+  width: 3.6rem;
+  height: 3.6rem;
+  z-index: 1;
+  border-radius: 50%;
+  color: var(--text-body);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.embla__button:disabled {
+  color: var(--detail-high-contrast);
+}
+.embla__button__svg {
+  width: 50%;
+  height: 50%;
+}
+.embla__selected-snap-display {
+  margin-right: 5vw;
+  justify-self: flex-end;
+  align-self: center;
+  color: hsl(262, 35%, 56%);
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+/* Translate Z/ perspective not working with drag */
+/* .list {
+  transform-style: preserve-3d;
+  transform: perspective(4000px);
+  transform-origin: center center;
+} */
+
+.item {
+  filter: blur(2px) brightness(0.2);
+  width: 10vw;
+  transition: all 0.3s ease-in-out;
+}
+
+.item:hover {
+  filter: blur(0px) brightness(1);
+  width: 15vw;
+  transform-origin: center;
+}
+
+.item:hover + * {
+  filter: blur(1px) brightness(0.7);
+  width: 7.5vw;
+  transform-origin: left;
+}
+
+.item:has(+ *:hover) {
+  filter: blur(1px) brightness(0.7);
+  width: 7.5vw;
+  transform-origin: right;
+}

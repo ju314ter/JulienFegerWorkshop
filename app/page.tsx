@@ -4,26 +4,23 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useMotionValue, useTransform, motion, useScroll } from "framer-motion";
 import { useRef } from "react";
+import Workspace from "@/components/section/workspace";
 
 export default function Home() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
   const aboutMeRef = useRef<HTMLDivElement>(null);
-  const showCaseRef = useRef<HTMLDivElement>(null);
+  const workspaceRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
 
   const cursorX = useMotionValue(0);
   const cursorY = useMotionValue(0);
 
   const { scrollYProgress } = useScroll({
-    target: aboutMeRef,
+    target: workspaceRef,
     offset: ["start end", "end end"],
   });
 
-  // useMotionValueEvent(scrollYProgress, "change", (x) => {
-  //   console.log(x);
-  // });
-
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMoveHero = (event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const { clientX, clientY } = event;
 
@@ -40,11 +37,22 @@ export default function Home() {
     cursorY.set(clampedY);
   };
 
+  // const handleDragWorkspace = (
+  //   event: MouseEvent | TouchEvent | PointerEvent,
+  //   info: PanInfo
+  // ) => {
+  //   //const clickedPoint = info.point.x;
+  //   // sliderOffset.set(clickedPoint);
+  //   console.log("Distance moved:", sliderOffset.get());
+
+  //   // J'ai la taille du slider et l'offset, interpoler sur un range 0,1 pour animer la position
+  // };
+
   const handleScrollToAboutMe = () => {
     aboutMeRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-  const handleScrollToShowcase = () => {
-    showCaseRef.current?.scrollIntoView({ behavior: "smooth" });
+  const handleScrollToWorkspace = () => {
+    workspaceRef.current?.scrollIntoView({ behavior: "smooth" });
   };
   const handleScrollToContact = () => {
     contactRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -52,13 +60,14 @@ export default function Home() {
 
   return (
     <>
+      {/* Hero section */}
       <motion.div
-        ref={containerRef}
+        ref={heroRef}
         initial={{ filter: "blur(20px)", pointerEvents: "none" }}
         animate={{ filter: "blur(0px)", pointerEvents: "auto" }}
         style={{ opacity: useTransform(scrollYProgress, [0.65, 0.1], [0, 1]) }}
         transition={{ duration: 0.3, delay: 0.2 }}
-        onMouseMove={handleMouseMove}
+        onMouseMove={handleMouseMoveHero}
         className="hero-section bg-black relative overflow-hidden h-[100vh] w-full flex flex-col items-center justify-start perspective-deep"
       >
         <motion.div
@@ -132,38 +141,46 @@ export default function Home() {
         {/* Menu */}
         <div className="navigation z-40 min-w-[300px] max-w-[1200px] w-[50%] mt-[10vh] flex flex-col gap-[10vh] items-center justify-start">
           <Button
-            className=" bg-transparent w-full h-24 text-[10rem]"
+            className="bg-transparent w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem]"
             onClick={handleScrollToAboutMe}
           >
             About me
           </Button>
 
           <Button
-            className="bg-transparent w-full h-24 text-[10rem]"
-            onClick={handleScrollToShowcase}
+            className="bg-transparent w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem]"
+            onClick={handleScrollToWorkspace}
           >
-            Showcase
+            Workspace
           </Button>
           <Button
-            className=" bg-transparent w-full h-24 text-[10rem]"
+            className=" bg-transparent w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem]"
             onClick={handleScrollToContact}
           >
             Contact
           </Button>
         </div>
       </motion.div>
+
+      {/* Workspace section */}
       <div
-        className="w-full h-[100vh] bg-black"
+        className="w-full relative h-[100vh] flex flex-col items-center bg-black snap-center overflow-hidden"
+        id="showcase"
+        ref={workspaceRef}
+      >
+        <Workspace />
+      </div>
+
+      {/* About me section */}
+      <div
+        className="w-full h-[100vh] bg-violet-700 snap-center"
         id="aboutme"
         ref={aboutMeRef}
       ></div>
+
+      {/* Contact me section */}
       <div
-        className="w-full h-[100vh] bg-violet-700"
-        id="showcase"
-        ref={showCaseRef}
-      ></div>
-      <div
-        className="w-full h-[100vh] bg-grey-200"
+        className="w-full h-[100vh] bg-grey-200 snap-center"
         id="contact"
         ref={contactRef}
       ></div>
