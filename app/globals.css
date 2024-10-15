@@ -273,25 +273,25 @@ body {
 } */
 
 .item {
-  filter: blur(2px) brightness(0.2);
+  filter: blur(1px) brightness(0.4);
   width: 10vw;
   transition: all 0.3s ease-in-out;
 }
 
 .item:hover {
   filter: blur(0px) brightness(1);
-  width: 15vw;
+  width: 12vw;
   transform-origin: center;
 }
 
 .item:hover + * {
   filter: blur(1px) brightness(0.7);
-  width: 7.5vw;
-  transform-origin: left;
+  width: 9vw;
+  transform-origin: right;
 }
 
 .item:has(+ *:hover) {
   filter: blur(1px) brightness(0.7);
-  width: 7.5vw;
-  transform-origin: right;
+  width: 9vw;
+  transform-origin: left;
 }

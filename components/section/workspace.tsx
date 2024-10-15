@@ -234,9 +234,9 @@ const Workspace = () => {
   const [sliderWidth, setSliderWidth] = useState(0);
   const sliderOffset = useMotionValue(0);
   const [hideSortSlider, setHideSortSlider] = useState(false);
-  const [sliderDirection, setSliderDirection] = useState<
-    "left" | "right" | "immobile"
-  >("immobile");
+  //   const [sliderDirection, setSliderDirection] = useState<
+  //     "left" | "right" | "immobile"
+  //   >("immobile");
   const xSmooth = useSpring(sliderOffset, { damping: 50, stiffness: 400 });
   const xVelocity = useVelocity(xSmooth);
 
@@ -259,13 +259,13 @@ const Workspace = () => {
   });
 
   // Update slider direction on velocity change
-  useMotionValueEvent(xVelocity, "change", (x) => {
-    return x > 0
-      ? setSliderDirection("left")
-      : x < 0
-      ? setSliderDirection("right")
-      : setSliderDirection("immobile");
-  });
+  //   useMotionValueEvent(xVelocity, "change", (x) => {
+  //     return x > 0
+  //       ? setSliderDirection("left")
+  //       : x < 0
+  //       ? setSliderDirection("right")
+  //       : setSliderDirection("immobile");
+  //   });
 
   const sortData = (sort: string) => {
     switch (sort) {
@@ -297,7 +297,7 @@ const Workspace = () => {
 
   return (
     <>
-      <div className="flex justify-center items-center w-full gap-2 h-[30%] p-2">
+      <div className="flex justify-center items-center w-full gap-4 h-[30%]">
         {data.map((project, i) => (
           <ProjectCandle
             key={i}
@@ -305,6 +305,11 @@ const Workspace = () => {
             index={i}
             positionPercent={positionPercent}
             totalItems={data.length}
+            onClick={(indexPercent: number) => {
+              const targetX = indexPercent * sliderWidth;
+              console.log(positionPercent.get() * sliderWidth, -targetX);
+              // animate("#showcase", { translateX: -targetX }, { duration: 0.5 });
+            }}
           />
         ))}
       </div>
@@ -328,59 +333,71 @@ const Workspace = () => {
           </span>
         </motion.div>
         <motion.div
+          id="showcase"
           ref={workspaceSliderRef}
           drag="x"
           dragConstraints={{ left: -sliderWidth, right: 0 }}
-          // onDrag={handleDragWorkspace}
           style={{ x: sliderOffset }}
           className="scrollable-projects-wrapper overflow-visible h-[70%] ml-[30vw] inline-flex items-center"
         >
-          <ul className="w-full h-full flex">
+          <motion.ul
+            initial={{ opacity: 0, y: "20%" }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="w-full h-full flex"
+          >
             <AnimatePresence>
-              {sliderData.map((project, i) => (
+              {sliderData.map((project) => (
                 <motion.li
                   key={project.name}
-                  style={{ z: i }}
                   layout
-                  initial={{
-                    opacity: 0,
-                    y:
-                      sliderDirection === "left"
-                        ? "20%"
-                        : sliderDirection === "right"
-                        ? "-20%"
-                        : "20%",
-                  }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
                   className="mb-2 p-2 rounded item group text-white bg-transparent h-full w-[10vw] cursor-grab flex justify-center"
                 >
-                  <ProjectCard project={project} />
+                  <ProjectCard
+                    project={project}
+                    positionPercent={positionPercent}
+                  />
                 </motion.li>
               ))}
             </AnimatePresence>
-          </ul>
+          </motion.ul>
         </motion.div>
       </div>
     </>
   );
 };
 
-const ProjectCard: React.FC<{ project: SlideItem }> = ({ project }) => {
+const ProjectCard: React.FC<{
+  project: SlideItem;
+  positionPercent: MotionValue<number>;
+}> = ({ project, positionPercent }) => {
+  const imageRef = useRef<HTMLImageElement>(null);
+
+  const offset = useTransform(positionPercent, [0, 1], [40, 60]);
+
+  useMotionValueEvent(offset, "change", (x) => {
+    if (imageRef.current) {
+      imageRef.current.style.objectPosition = `${x}%`;
+    }
+  });
+
   return (
-    <div className="relative h-full w-[90%]">
+    <div className="relative flex justify-center h-full w-[90%]">
       <Image
+        ref={imageRef}
         src={project.imgHeroUrl}
         alt={project.description}
         width={2000}
         height={1000}
         draggable={false}
-        className="absolute top-0 left-0 h-full object-cover object-[50%_50%]"
+        className={`absolute top-0 left-0 h-full object-cover`}
       />
-      <div className="absolute bottom-0 left-0 opacity-0 group-hover:translate-y-full group-hover:opacity-100 flex flex-col items-center justify-center transition-all duration-300">
-        <span className="text-white text-xl">{project.name}</span>
-        <span className="text-white text-lg">{project.titre}</span>
+      <div className="absolute bottom-0 opacity-0 group-hover:translate-y-full group-hover:opacity-100 flex flex-col items-center justify-center transition-all duration-300">
+        {project.tags.map((tag) => (
+          <span key={project.name + tag} className="text-white text-xl">
+            {tag}
+          </span>
+        ))}
       </div>
     </div>
   );
@@ -391,7 +408,8 @@ const ProjectCandle: React.FC<{
   velocityPercent: MotionValue<number>;
   positionPercent: MotionValue<number>;
   totalItems: number;
-}> = ({ index, velocityPercent, positionPercent, totalItems }) => {
+  onClick: (indexPercent: number) => void;
+}> = ({ index, velocityPercent, positionPercent, totalItems, onClick }) => {
   const scaleY = useMotionValue(0.2);
   const minScale = 0.2; // Minimum scale value
   const maxScale = 2; // Maximum scale value
@@ -405,12 +423,13 @@ const ProjectCandle: React.FC<{
         (1 - Math.abs(indexPercent.get() - positionPercent.get()))
   );
 
-  const violet = (saturation: number) => `hsl(262, ${saturation}%, 56%)`;
+  const violet = (saturation: number) => `hsl(262, ${saturation}%, 76%)`;
   const backgroundColor = useTransform(
     scalingFactor,
     [minScale, maxScale],
     [violet(0), violet(100)]
   );
+  const opacity = useTransform(scalingFactor, [minScale, maxScale], [0, 1]);
 
   useMotionValueEvent(velocityPercent, "change", (x) => {
     // Apply the scaling factor to the range
@@ -430,8 +449,10 @@ const ProjectCandle: React.FC<{
         scaleY: scaleY,
         transformOrigin: "center bottom",
         backgroundColor,
+        opacity,
       }}
-      className="text-white w-4 h-12 overflow-hidden"
+      className="text-white w-4 h-12 overflow-hidden cursor-pointer"
+      onClick={() => onClick(indexPercent.get())}
     ></motion.div>
   );
 };
