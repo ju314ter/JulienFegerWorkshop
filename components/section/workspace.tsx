@@ -297,7 +297,69 @@ const Workspace = () => {
 
   return (
     <>
-      <div className="flex justify-center items-center w-full gap-4 h-[30%]">
+      <div className="relative flex items-center w-full h-[80%]">
+        <motion.div
+          variants={{
+            visible: { translateX: 0 },
+            hidden: { translateX: "-200%" }, // Adjust the translation value as needed
+          }}
+          animate={hideSortSlider ? "hidden" : "visible"}
+          className="absolute left-[2vw] flex flex-col gap-10 text-xl"
+        >
+          <span
+            className="cursor-pointer text-2xl font-bold text-center 
+             border-2 border-black p-4 hover:text-white hover:bg-black transition-all duration-300"
+            onClick={() => sortData("date")}
+          >
+            Date
+          </span>
+          <span
+            className="cursor-pointer text-2xl font-bold text-center
+             border-2 border-black p-4 hover:text-white hover:bg-black transition-all duration-300"
+            onClick={() => sortData("eco")}
+          >
+            Ecosystem
+          </span>
+          <span
+            className="cursor-pointer text-2xl font-bold text-center
+             border-2 border-black p-4 hover:text-white hover:bg-black transition-all duration-300"
+            onClick={() => sortData("random")}
+          >
+            Random
+          </span>
+        </motion.div>
+        <motion.div
+          id="showcase"
+          ref={workspaceSliderRef}
+          drag="x"
+          dragConstraints={{ left: -sliderWidth, right: 0 }}
+          style={{ x: sliderOffset }}
+          className="scrollable-projects-wrapper overflow-visible h-[50%] ml-[20vw] inline-flex items-center"
+        >
+          <motion.ul
+            initial={{ opacity: 0, y: "20%" }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="w-full h-full flex"
+          >
+            <AnimatePresence>
+              {sliderData.map((project) => (
+                <motion.li
+                  key={project.name}
+                  layout
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="rounded item group text-white bg-transparent h-full w-[10vw] cursor-grab flex justify-center"
+                >
+                  <ProjectCard
+                    project={project}
+                    positionPercent={positionPercent}
+                  />
+                </motion.li>
+              ))}
+            </AnimatePresence>
+          </motion.ul>
+        </motion.div>
+      </div>
+      <div className="flex justify-between items-end w-full h-[20%]">
         {data.map((project, i) => (
           <ProjectCandle
             key={i}
@@ -313,56 +375,6 @@ const Workspace = () => {
           />
         ))}
       </div>
-      <div className="relative flex items-start w-full h-[70%]">
-        <motion.div
-          variants={{
-            visible: { translateX: 0 },
-            hidden: { translateX: "-200%" }, // Adjust the translation value as needed
-          }}
-          animate={hideSortSlider ? "hidden" : "visible"}
-          className="absolute left-[5vw] text-white flex flex-col gap-10 text-xl"
-        >
-          <span className="cursor-pointer" onClick={() => sortData("date")}>
-            Date
-          </span>
-          <span className="cursor-pointer" onClick={() => sortData("eco")}>
-            Ecosystem
-          </span>
-          <span className="cursor-pointer" onClick={() => sortData("random")}>
-            Random
-          </span>
-        </motion.div>
-        <motion.div
-          id="showcase"
-          ref={workspaceSliderRef}
-          drag="x"
-          dragConstraints={{ left: -sliderWidth, right: 0 }}
-          style={{ x: sliderOffset }}
-          className="scrollable-projects-wrapper overflow-visible h-[70%] ml-[30vw] inline-flex items-center"
-        >
-          <motion.ul
-            initial={{ opacity: 0, y: "20%" }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="w-full h-full flex"
-          >
-            <AnimatePresence>
-              {sliderData.map((project) => (
-                <motion.li
-                  key={project.name}
-                  layout
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                  className="mb-2 p-2 rounded item group text-white bg-transparent h-full w-[10vw] cursor-grab flex justify-center"
-                >
-                  <ProjectCard
-                    project={project}
-                    positionPercent={positionPercent}
-                  />
-                </motion.li>
-              ))}
-            </AnimatePresence>
-          </motion.ul>
-        </motion.div>
-      </div>
     </>
   );
 };
@@ -373,7 +385,7 @@ const ProjectCard: React.FC<{
 }> = ({ project, positionPercent }) => {
   const imageRef = useRef<HTMLImageElement>(null);
 
-  const offset = useTransform(positionPercent, [0, 1], [40, 60]);
+  const offset = useTransform(positionPercent, [0, 1], [0, 100]);
 
   useMotionValueEvent(offset, "change", (x) => {
     if (imageRef.current) {
@@ -382,7 +394,7 @@ const ProjectCard: React.FC<{
   });
 
   return (
-    <div className="relative flex justify-center h-full w-[90%]">
+    <div className="relative flex justify-center h-full w-[50%] border-4 border-black">
       <Image
         ref={imageRef}
         src={project.imgHeroUrl}
@@ -392,13 +404,13 @@ const ProjectCard: React.FC<{
         draggable={false}
         className={`absolute top-0 left-0 h-full object-cover`}
       />
-      <div className="absolute bottom-0 opacity-0 group-hover:translate-y-full group-hover:opacity-100 flex flex-col items-center justify-center transition-all duration-300">
+      {/* <div className="absolute bottom-0 opacity-0 group-hover:translate-y-full group-hover:opacity-100 flex flex-col items-center justify-center transition-all duration-300">
         {project.tags.map((tag) => (
           <span key={project.name + tag} className="text-white text-xl">
             {tag}
           </span>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };
@@ -423,7 +435,7 @@ const ProjectCandle: React.FC<{
         (1 - Math.abs(indexPercent.get() - positionPercent.get()))
   );
 
-  const violet = (saturation: number) => `hsl(262, ${saturation}%, 76%)`;
+  const violet = (saturation: number) => `hsl(262, ${saturation}%, 75%)`;
   const backgroundColor = useTransform(
     scalingFactor,
     [minScale, maxScale],
@@ -451,7 +463,7 @@ const ProjectCandle: React.FC<{
         backgroundColor,
         opacity,
       }}
-      className="text-white w-4 h-12 overflow-hidden cursor-pointer"
+      className="text-white  flex grow w-12 h-12 overflow-hidden"
       onClick={() => onClick(indexPercent.get())}
     ></motion.div>
   );

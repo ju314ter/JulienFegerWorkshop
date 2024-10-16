@@ -29,7 +29,7 @@ export default function RootLayout({
       className="overflow-y-scroll snap-y snap-proximity scroll-smooth overflow-x-hidden"
     >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} h-[100vh] bg-black antialiased relative`}
+        className={`${geistSans.variable} ${geistMono.variable} h-[100vh] bg-violet-700 antialiased relative`}
       >
         <div className="fixed w-20 h-20 top-[2vw] left-[2vw] bg-black z-50 flex justify-center items-center">
           <span className="text-white text-3xl">JF</span>

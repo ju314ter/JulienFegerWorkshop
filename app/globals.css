@@ -274,24 +274,24 @@ body {
 
 .item {
   filter: blur(1px) brightness(0.4);
-  width: 10vw;
+  width: 25vw;
   transition: all 0.3s ease-in-out;
 }
 
 .item:hover {
   filter: blur(0px) brightness(1);
-  width: 12vw;
+  width: 27vw;
   transform-origin: center;
 }
 
 .item:hover + * {
   filter: blur(1px) brightness(0.7);
-  width: 9vw;
+  width: 24vw;
   transform-origin: right;
 }
 
 .item:has(+ *:hover) {
   filter: blur(1px) brightness(0.7);
-  width: 9vw;
+  width: 24vw;
   transform-origin: left;
 }

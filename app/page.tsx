@@ -60,21 +60,22 @@ export default function Home() {
 
   return (
     <>
-      {/* Hero section */}
+      {/* Hero section : TODO => */}
       <motion.div
         ref={heroRef}
         initial={{ filter: "blur(20px)", pointerEvents: "none" }}
         animate={{ filter: "blur(0px)", pointerEvents: "auto" }}
-        style={{ opacity: useTransform(scrollYProgress, [0.65, 0.1], [0, 1]) }}
+        style={{ opacity: useTransform(scrollYProgress, [0.6, 0.3], [0, 1]) }}
         transition={{ duration: 0.3, delay: 0.2 }}
         onMouseMove={handleMouseMoveHero}
-        className="hero-section bg-black relative overflow-hidden h-[100vh] w-full flex flex-col items-center justify-start perspective-deep"
+        className="hero-section bg-violet-700 relative overflow-hidden h-[100vh] w-full flex flex-col items-center justify-start perspective-deep"
       >
         <motion.div
           style={{
             rotateX: useTransform(cursorY, [-100, 100], [-2, 2]),
             rotateY: useTransform(cursorX, [-100, 100], [5, -5]),
             translateX: useTransform(cursorX, [-100, 100], [-10, 10]),
+            translateY: useTransform(scrollYProgress, [1, 0], ["100%", "0%"]),
             filter: useTransform(
               cursorX,
               [-100, -50, 0, 50, 100],
@@ -104,6 +105,8 @@ export default function Home() {
             rotateX: useTransform(cursorY, [-100, 100], [10, -10]),
             rotateY: useTransform(cursorX, [-100, 100], [15, -15]),
             translateX: useTransform(cursorX, [-100, 100], ["0%", "3%"]),
+            translateY: useTransform(scrollYProgress, [1, 0], ["100%", "0%"]),
+
             scale: 1.1,
           }}
           className="rabbit z-30 absolute bottom-0 left-[7vw] h-full w-full pointer-events-none"
@@ -139,7 +142,12 @@ export default function Home() {
         </motion.div>
 
         {/* Menu */}
-        <div className="navigation z-40 min-w-[300px] max-w-[1200px] w-[50%] mt-[10vh] flex flex-col gap-[10vh] items-center justify-start">
+        <motion.div
+          style={{
+            translateY: useTransform(scrollYProgress, [1, 0], ["100%", "0%"]),
+          }}
+          className="navigation relative z-40 min-w-[300px] max-w-[1200px] w-[50%] mt-[10vh] flex flex-col gap-[10vh] items-center justify-start"
+        >
           <Button
             className="bg-transparent w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem]"
             onClick={handleScrollToAboutMe}
@@ -159,12 +167,13 @@ export default function Home() {
           >
             Contact
           </Button>
-        </div>
+        </motion.div>
       </motion.div>
 
       {/* Workspace section */}
       <div
-        className="w-full relative h-[100vh] flex flex-col items-center bg-black snap-center overflow-hidden"
+        className="w-full relative h-[100vh] flex flex-col items-center snap-center overflow-hidden 
+        bg-gradient-to-b from-violet-700 to-blue-300"
         id="showcase"
         ref={workspaceRef}
       >
@@ -173,14 +182,14 @@ export default function Home() {
 
       {/* About me section */}
       <div
-        className="w-full h-[100vh] bg-violet-700 snap-center"
+        className="w-full h-[100vh] bg-black snap-center"
         id="aboutme"
         ref={aboutMeRef}
       ></div>
 
       {/* Contact me section */}
       <div
-        className="w-full h-[100vh] bg-grey-200 snap-center"
+        className="w-full h-[100vh] bg-gradient-to-b from-blue-300 to-violet-700 snap-center"
         id="contact"
         ref={contactRef}
       ></div>
