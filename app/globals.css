@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+/* body {
   font-family: Arial, Helvetica, sans-serif;
-}
+} */
 
 @layer utilities {
   .text-balance {
@@ -274,24 +274,51 @@ body {
 
 .item {
   filter: blur(1px) brightness(0.4);
-  width: 25vw;
+  width: 30vw;
   transition: all 0.3s ease-in-out;
 }
 
 .item:hover {
   filter: blur(0px) brightness(1);
-  width: 27vw;
+  width: 32vw;
   transform-origin: center;
 }
 
 .item:hover + * {
   filter: blur(1px) brightness(0.7);
-  width: 24vw;
+  width: 29vw;
   transform-origin: right;
 }
 
 .item:has(+ *:hover) {
   filter: blur(1px) brightness(0.7);
-  width: 24vw;
+  width: 29vw;
   transform-origin: left;
+}
+
+#clipped-stroke-bot {
+  stroke-dasharray: 700;
+  stroke-dashoffset: 700;
+  animation: draw 2s cubic-bezier(0, 0.52, 0.86, 0.91) 1 forwards;
+  animation-delay: 0.5s;
+}
+
+#clipped-stroke-top {
+  stroke-dasharray: 700;
+  stroke-dashoffset: 700;
+  animation: draw 1.5s cubic-bezier(0, 0.52, 0.86, 0.91) 1 forwards;
+  animation-delay: 2s;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes dropin {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

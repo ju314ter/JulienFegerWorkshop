@@ -10,223 +10,11 @@ import {
   useTransform,
   useVelocity,
 } from "framer-motion";
-import { SlideItem } from "../ui/carousel";
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { shuffleArray } from "@/lib/utils";
-
-const data: SlideItem[] = [
-  {
-    name: "cliqDigital",
-    titre: "Cliq Digital",
-    imgHeroUrl: "/img/cliq1-min.jpg",
-    imgUrl: [
-      "/img/cliq2-min.jpg",
-      "/img/cliq3-min.jpg",
-      "/img/cliq4-min.jpg",
-      "/img/cliq5-min.jpg",
-    ],
-    description:
-      "Cliq est la plateforme de distribution multimedia en full branding de la société Cliq Digital.",
-    tags: ["react", "nextJS"],
-    websiteUrl: "https://www.cliqdigital.com",
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-  {
-    name: "loveOn",
-    titre: "Cliq Digital",
-    imgHeroUrl: "/img/matcher-min.jpg",
-    imgUrl: [
-      "/img/itsamatch-min.jpg",
-      "/img/maquette-min.jpg",
-      "/img/mobilerendu0-min.jpg",
-    ],
-    description: "Concept et MVP d'une application de rencontre gamifiée",
-    tags: ["React-Native", "Heroku", "Postgres", "NodeJS"],
-    websiteUrl: null,
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-  {
-    name: "mixr",
-    titre: "Mixr",
-    imgHeroUrl: "/img/mixr-min.jpg",
-    imgUrl: ["/img/mixr-min.jpg"],
-    description:
-      "Plateforme de création de repas chez l'habitant dans le cadre de la lutte contre l'isolement social.",
-    tags: ["Wordpress", "Javascript", "BuddyPress"],
-    websiteUrl: null,
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-  {
-    name: "catalogueU",
-    titre: "Catalogue U",
-    imgHeroUrl: "/img/patisserie1-min.jpg",
-    imgUrl: ["/img/patisserie1-min.jpg", "/img/patisserie2-min.jpg"],
-    description:
-      "Application présentoir pour tablette à destination des usagers d'une boulangerie U.",
-    tags: ["React-Native", "DatoCMS"],
-    websiteUrl: "https://www.cliqdigital.com",
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-  {
-    name: "wikiTft",
-    titre: "Wiki TFT",
-    imgHeroUrl: "/img/cliq1-min.jpg",
-    imgUrl: ["/img/cliq2-min.jpg", "/img/cliq3-min.jpg", "/img/cliq4-min.jpg"],
-    description:
-      "Application de documentation sur la meta de l'autobattler de Riot Games, TeamFight Tactics.",
-    tags: ["React-Native", "Expo"],
-    websiteUrl: "https://www.cliqdigital.com",
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-  {
-    name: "landingPageBuilder",
-    titre: "Landing page builder",
-    imgHeroUrl: "/img/cliq1-min.jpg",
-    imgUrl: ["/img/cliq2-min.jpg", "/img/cliq3-min.jpg", "/img/cliq4-min.jpg"],
-    description:
-      "Outil de tooling pour la création de landing page pour les entitées de Cliq Digital & co.",
-    tags: ["Angular", "Angular Material"],
-    websiteUrl: "https://www.cliqdigital.com",
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-  {
-    name: "primezy",
-    titre: "Primezy",
-    imgHeroUrl: "/img/primezy-min.jpg",
-    imgUrl: ["/img/primezy1-min.jpg"],
-    description:
-      "Solution en white branding de distribution multimedia pour Cliq Digital.",
-    tags: ["Angular", "NgRx", "RxJS", "SCSS", "NodeJS"],
-    websiteUrl: "https://www.cliqdigital.com",
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-  {
-    name: "JFW2019",
-    titre: "Julien FEGER Alternant Workshop",
-    imgHeroUrl: "/img/JFWP-min.jpg",
-    imgUrl: [
-      "/img/JFWP-min.jpg",
-      "/img/JFWP1-min.jpg",
-      "/img/JFWP2-min.jpg",
-      "/img/JFWP3-min.jpg",
-      "/img/JFWP4-min.jpg",
-    ],
-    description: "Mon premier portfolio.",
-    tags: ["react", "nextJS"],
-    websiteUrl: "https://www.cliqdigital.com",
-    githubUrl: null,
-    date: "2019-06-01",
-  },
-  {
-    name: "JFW2021",
-    titre: "Julien FEGER Junior Workshop",
-    imgHeroUrl: "/img/cliq1-min.jpg",
-    imgUrl: ["/img/cliq2-min.jpg", "/img/cliq3-min.jpg", "/img/cliq4-min.jpg"],
-    description:
-      "Cliq est la plateforme de distribution multimedia en full branding de la société Cliq Digital.",
-    tags: ["react", "nextJS"],
-    websiteUrl: "https://www.cliqdigital.com",
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-  {
-    name: "puissance4",
-    titre: "Puissance 4",
-    imgHeroUrl: "/img/cliq1-min.jpg",
-    imgUrl: ["/img/cliq2-min.jpg", "/img/cliq3-min.jpg", "/img/cliq4-min.jpg"],
-    description: "Jeux web de puissance 4 en versus deux joueurs.",
-    tags: ["react", "nextJS", "websockets", "socket.io", "nodeJS"],
-    websiteUrl: "https://www.cliqdigital.com",
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-  {
-    name: "poolPulse",
-    titre: "Pool Pulse",
-    imgHeroUrl: "/img/cliq1-min.jpg",
-    imgUrl: ["/img/cliq2-min.jpg", "/img/cliq3-min.jpg", "/img/cliq4-min.jpg"],
-    description:
-      "SaSS de monitoring des pools de liquidité dans la finance décentralisée.",
-    tags: [
-      "React",
-      "NextJS",
-      "Zustand",
-      "Tailwindcss",
-      "Prisma",
-      "Postgres",
-      "Framer-motion",
-      "NodeMailer",
-    ],
-    websiteUrl: "https://poolpulse.vercel.app",
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-  {
-    name: "damePascale",
-    titre: "Dame Pascale",
-    imgHeroUrl: "/img/cliq1-min.jpg",
-    imgUrl: ["/img/cliq2-min.jpg", "/img/cliq3-min.jpg", "/img/cliq4-min.jpg"],
-    description:
-      "E-commerce artisanal de peluches crochetées et de bijou floraux",
-    tags: [
-      "React",
-      "NextJS",
-      "Zustand",
-      "Tailwindcss",
-      "Sanity",
-      "Stripe",
-      "Framer-motion",
-      "NodeMailer",
-    ],
-    websiteUrl: "https://damepascale.fr",
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-  {
-    name: "eptm",
-    titre: "EPTM",
-    imgHeroUrl: "/img/cliq1-min.jpg",
-    imgUrl: ["/img/cliq2-min.jpg", "/img/cliq3-min.jpg", "/img/cliq4-min.jpg"],
-    description:
-      "Solution de tri mutualisée pour les différents acteurs de la distribution des colis à La Poste.",
-    tags: ["Angular", "SonarQube", "Jasmine/Karma", "NgRx", "RxJS"],
-    websiteUrl: "https://eptm.laposte.fr",
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-  {
-    name: "maxeem",
-    titre: "Maxeem",
-    imgHeroUrl: "/img/cliq1-min.jpg",
-    imgUrl: ["/img/cliq2-min.jpg", "/img/cliq3-min.jpg", "/img/cliq4-min.jpg"],
-    description:
-      "Plateforme de gestion des demandes de prime MaPrimeRenov' pour les rénovations énergétiques des particuliers et des proffessionnels.",
-    tags: ["Angular", "Cypress", "NgRx", "RxJS"],
-    websiteUrl: "https://www.maxeem.com",
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-  {
-    name: "adm",
-    titre: "Aile du Maine",
-    imgHeroUrl: "/img/cliq1-min.jpg",
-    imgUrl: ["/img/cliq2-min.jpg", "/img/cliq3-min.jpg", "/img/cliq4-min.jpg"],
-    description:
-      "Site vitrine pour l'association de planneur du Mans, Les Ailes du Maine.",
-    tags: ["Angular", "Cypress", "NgRx", "RxJS"],
-    websiteUrl: "https://www.maxeem.com",
-    githubUrl: null,
-    date: "2022-06-01",
-  },
-];
+import { ButtonSort } from "../ui/button";
+import { data, SlideItem } from "@/data/projects";
 
 const Workspace = () => {
   const workspaceSliderRef = useRef<HTMLDivElement>(null);
@@ -234,9 +22,6 @@ const Workspace = () => {
   const [sliderWidth, setSliderWidth] = useState(0);
   const sliderOffset = useMotionValue(0);
   const [hideSortSlider, setHideSortSlider] = useState(false);
-  //   const [sliderDirection, setSliderDirection] = useState<
-  //     "left" | "right" | "immobile"
-  //   >("immobile");
   const xSmooth = useSpring(sliderOffset, { damping: 50, stiffness: 400 });
   const xVelocity = useVelocity(xSmooth);
 
@@ -249,6 +34,7 @@ const Workspace = () => {
     };
 
     handleResize(); // Set initial width
+    sortData("date"); // set initial sort to date sorting
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -257,15 +43,6 @@ const Workspace = () => {
   useMotionValueEvent(sliderOffset, "change", (x) => {
     return x < -100 ? setHideSortSlider(true) : setHideSortSlider(false);
   });
-
-  // Update slider direction on velocity change
-  //   useMotionValueEvent(xVelocity, "change", (x) => {
-  //     return x > 0
-  //       ? setSliderDirection("left")
-  //       : x < 0
-  //       ? setSliderDirection("right")
-  //       : setSliderDirection("immobile");
-  //   });
 
   const sortData = (sort: string) => {
     switch (sort) {
@@ -277,7 +54,28 @@ const Workspace = () => {
         );
         break;
       case "eco":
-        setSliderData([...data].sort((a, b) => a.tags.length - b.tags.length));
+        setSliderData(
+          [...data].sort((a, b) => {
+            const tagsDiff = a.tags.length - b.tags.length;
+            if (tagsDiff !== 0) {
+              return tagsDiff;
+            } else {
+              return new Date(b.date).getTime() - new Date(a.date).getTime();
+            }
+          })
+        );
+        break;
+      case "role":
+        setSliderData(
+          [...data].sort((a, b) => {
+            const roleDiff = b.role.localeCompare(a.role);
+            if (roleDiff !== 0) {
+              return roleDiff;
+            } else {
+              return new Date(b.date).getTime() - new Date(a.date).getTime();
+            }
+          })
+        );
         break;
       case "random":
         setSliderData(shuffleArray([...data]));
@@ -297,7 +95,7 @@ const Workspace = () => {
 
   return (
     <>
-      <div className="relative flex items-center w-full h-[80%]">
+      <div className="relative flex items-end w-full h-[80%]">
         <motion.div
           variants={{
             visible: { translateX: 0 },
@@ -306,27 +104,21 @@ const Workspace = () => {
           animate={hideSortSlider ? "hidden" : "visible"}
           className="absolute left-[2vw] flex flex-col gap-10 text-xl"
         >
-          <span
-            className="cursor-pointer text-2xl font-bold text-center 
-             border-2 border-black p-4 hover:text-white hover:bg-black transition-all duration-300"
-            onClick={() => sortData("date")}
-          >
+          <ButtonSort variant={"projectSort"} onClick={() => sortData("date")}>
             Date
-          </span>
-          <span
-            className="cursor-pointer text-2xl font-bold text-center
-             border-2 border-black p-4 hover:text-white hover:bg-black transition-all duration-300"
-            onClick={() => sortData("eco")}
-          >
+          </ButtonSort>
+          <ButtonSort variant={"projectSort"} onClick={() => sortData("eco")}>
             Ecosystem
-          </span>
-          <span
-            className="cursor-pointer text-2xl font-bold text-center
-             border-2 border-black p-4 hover:text-white hover:bg-black transition-all duration-300"
+          </ButtonSort>
+          <ButtonSort variant={"projectSort"} onClick={() => sortData("role")}>
+            Rôle
+          </ButtonSort>
+          <ButtonSort
+            variant={"projectSort"}
             onClick={() => sortData("random")}
           >
             Random
-          </span>
+          </ButtonSort>
         </motion.div>
         <motion.div
           id="showcase"
@@ -334,7 +126,7 @@ const Workspace = () => {
           drag="x"
           dragConstraints={{ left: -sliderWidth, right: 0 }}
           style={{ x: sliderOffset }}
-          className="scrollable-projects-wrapper overflow-visible h-[50%] ml-[20vw] inline-flex items-center"
+          className="scrollable-projects-wrapper overflow-visible h-[70%] ml-[20vw] inline-flex items-center"
         >
           <motion.ul
             initial={{ opacity: 0, y: "20%" }}
@@ -385,7 +177,7 @@ const ProjectCard: React.FC<{
 }> = ({ project, positionPercent }) => {
   const imageRef = useRef<HTMLImageElement>(null);
 
-  const offset = useTransform(positionPercent, [0, 1], [0, 100]);
+  const offset = useTransform(positionPercent, [0, 1], [30, 70]);
 
   useMotionValueEvent(offset, "change", (x) => {
     if (imageRef.current) {
@@ -394,7 +186,7 @@ const ProjectCard: React.FC<{
   });
 
   return (
-    <div className="relative flex justify-center h-full w-[50%] border-4 border-black">
+    <div className="relative flex justify-center h-full w-[70%] border-4 border-black">
       <Image
         ref={imageRef}
         src={project.imgHeroUrl}

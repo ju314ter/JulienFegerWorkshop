@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useMotionValue, useTransform, motion, useScroll } from "framer-motion";
 import { useRef } from "react";
 import Workspace from "@/components/section/workspace";
+import Logo from "@/components/ui/logo";
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -37,17 +38,9 @@ export default function Home() {
     cursorY.set(clampedY);
   };
 
-  // const handleDragWorkspace = (
-  //   event: MouseEvent | TouchEvent | PointerEvent,
-  //   info: PanInfo
-  // ) => {
-  //   //const clickedPoint = info.point.x;
-  //   // sliderOffset.set(clickedPoint);
-  //   console.log("Distance moved:", sliderOffset.get());
-
-  //   // J'ai la taille du slider et l'offset, interpoler sur un range 0,1 pour animer la position
-  // };
-
+  const handleScrollToHero = () => {
+    heroRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
   const handleScrollToAboutMe = () => {
     aboutMeRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -60,7 +53,15 @@ export default function Home() {
 
   return (
     <>
-      {/* Hero section : TODO => */}
+      {/* Logo */}
+      <div
+        className="fixed w-20 h-20 top-[2vw] left-[2vw] bg-black z-50 flex justify-center items-center p-2 cursor-pointer"
+        onClick={handleScrollToHero}
+      >
+        <Logo className="w-full h-full" />
+      </div>
+
+      {/* Hero section */}
       <motion.div
         ref={heroRef}
         initial={{ filter: "blur(20px)", pointerEvents: "none" }}
@@ -149,20 +150,20 @@ export default function Home() {
           className="navigation relative z-40 min-w-[300px] max-w-[1200px] w-[50%] mt-[10vh] flex flex-col gap-[10vh] items-center justify-start"
         >
           <Button
-            className="bg-transparent w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem]"
+            className="bg-transparent w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem] menu-button"
             onClick={handleScrollToAboutMe}
           >
             About me
           </Button>
 
           <Button
-            className="bg-transparent w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem]"
+            className="bg-transparent w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem] menu-button"
             onClick={handleScrollToWorkspace}
           >
             Workspace
           </Button>
           <Button
-            className=" bg-transparent w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem]"
+            className=" bg-transparent w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem] menu-button"
             onClick={handleScrollToContact}
           >
             Contact

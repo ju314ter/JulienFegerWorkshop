@@ -10,18 +10,7 @@ import {
   useSelectedSnapDisplay,
 } from "./carousel-selected-snap-display";
 import useEmblaCarousel from "embla-carousel-react";
-
-export type SlideItem = {
-  name: string;
-  titre: string;
-  imgHeroUrl: string;
-  imgUrl: string[];
-  description: string;
-  tags: string[];
-  githubUrl: string | null;
-  websiteUrl: string | null;
-  date: string;
-};
+import { SlideItem } from "@/data/projects";
 
 type PropType = {
   slides: SlideItem[];
