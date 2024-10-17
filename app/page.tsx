@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import Image from "next/image";
 import { useMotionValue, useTransform, motion, useScroll } from "framer-motion";
 import { useRef } from "react";
@@ -38,17 +38,23 @@ export default function Home() {
     cursorY.set(clampedY);
   };
 
-  const handleScrollToHero = () => {
-    heroRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-  const handleScrollToAboutMe = () => {
-    aboutMeRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-  const handleScrollToWorkspace = () => {
-    workspaceRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-  const handleScrollToContact = () => {
-    contactRef.current?.scrollIntoView({ behavior: "smooth" });
+  const handleScroll = (scrollref: string) => () => {
+    switch (scrollref) {
+      case "aboutme":
+        aboutMeRef.current?.scrollIntoView({ behavior: "smooth" });
+        break;
+      case "workspace":
+        workspaceRef.current?.scrollIntoView({ behavior: "smooth" });
+        break;
+      case "contact":
+        contactRef.current?.scrollIntoView({ behavior: "smooth" });
+        break;
+      case "hero":
+        heroRef.current?.scrollIntoView({ behavior: "smooth" });
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -56,7 +62,7 @@ export default function Home() {
       {/* Logo */}
       <div
         className="fixed w-20 h-20 top-[2vw] left-[2vw] bg-black z-50 flex justify-center items-center p-2 cursor-pointer"
-        onClick={handleScrollToHero}
+        onClick={handleScroll("hero")}
       >
         <Logo className="w-full h-full" />
       </div>
@@ -66,7 +72,7 @@ export default function Home() {
         ref={heroRef}
         initial={{ filter: "blur(20px)", pointerEvents: "none" }}
         animate={{ filter: "blur(0px)", pointerEvents: "auto" }}
-        style={{ opacity: useTransform(scrollYProgress, [0.6, 0.3], [0, 1]) }}
+        style={{ opacity: useTransform(scrollYProgress, [0.8, 0.1], [0, 1]) }}
         transition={{ duration: 0.3, delay: 0.2 }}
         onMouseMove={handleMouseMoveHero}
         className="hero-section bg-violet-700 relative overflow-hidden h-[100vh] w-full flex flex-col items-center justify-start perspective-deep"
@@ -146,28 +152,24 @@ export default function Home() {
         <motion.div
           style={{
             translateY: useTransform(scrollYProgress, [1, 0], ["100%", "0%"]),
+            opacity: useTransform(scrollYProgress, [0.4, 0], [0, 1]),
           }}
-          className="navigation relative z-40 min-w-[300px] max-w-[1200px] w-[50%] mt-[10vh] flex flex-col gap-[10vh] items-center justify-start"
+          className="navigation relative z-40 min-w-[300px] max-w-[1200px] w-[50%] mt-[10vh] flex flex-col items-center justify-start"
         >
-          <Button
-            className="bg-transparent w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem] menu-button"
-            onClick={handleScrollToAboutMe}
-          >
-            About me
-          </Button>
-
-          <Button
-            className="bg-transparent w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem] menu-button"
-            onClick={handleScrollToWorkspace}
-          >
-            Workspace
-          </Button>
-          <Button
-            className=" bg-transparent w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem] menu-button"
-            onClick={handleScrollToContact}
-          >
-            Contact
-          </Button>
+          {[
+            { title: "bout me", scrollref: "aboutme" },
+            { title: "orkspace", scrollref: "workspace" },
+            { title: "ontact", scrollref: "contact" },
+          ].map((item, i) => (
+            <ButtonLink
+              key={i}
+              className="bg-transparent my-12 w-full h-24 text-[3rem] md:text-[5rem] lg:text-[8rem] xl:text-[10rem] menu-button"
+              onClick={handleScroll(item.scrollref)}
+              emphaseLetter={item.scrollref[0].toUpperCase()}
+            >
+              {item.title}
+            </ButtonLink>
+          ))}
         </motion.div>
       </motion.div>
 
