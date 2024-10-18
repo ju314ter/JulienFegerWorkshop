@@ -12,7 +12,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-black text-primary-foreground",
         projectSort:
-          "cursor-pointer bg-purple-100 h-[5rem] rounded-none text-xl md:text-3xl font-bold text-center border-2 border-black p-4",
+          "cursor-pointer bg-transparent text-white hover:text-black duration-300 h-[5rem] rounded-none text-xl md:text-3xl font-bold text-center border-2 border-white p-4",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
@@ -59,23 +59,38 @@ Button.displayName = "Button";
 
 const ButtonSort = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    // const translateY = useMotionValue(0);
-    // hover:bg-black transition-all duration-300
-    const [y, setY] = React.useState("100%");
+    const [yMockTop, setYMockTop] = React.useState("-100%");
+    const [yReal, setYReal] = React.useState("0%");
+    const [yMockBot, setYMockBot] = React.useState("100%");
     const [direction, setDirection] = React.useState(true);
+    const [isAnimating, setIsAnimating] = React.useState(false);
+
+    const animationDuration = 0.35;
 
     const onMouseEnter = () => {
-      setY("0%");
-      setDirection(!direction);
+      if (isAnimating) return;
+      setIsAnimating(true);
+      // animate according to direction
+      setYMockTop(() => (direction ? "-200%" : "0%"));
+      setYReal(() => (direction ? "-100%" : "100%"));
+      setYMockBot(() => (direction ? "0%" : "200%"));
     };
+
     const onMouseLeave = () => {
-      setY(() => (direction ? "-100%" : "100%"));
+      // Go back to initial state
+      setYMockTop("-100%");
+      setYReal("0%");
+      setYMockBot("100%");
+
+      // change direction for next animation
+      setDirection(!direction);
+      setTimeout(() => setIsAnimating(false), animationDuration * 1000);
     };
 
     const Comp = asChild ? Slot : "button";
     return (
       <div
-        className="relative overflow-hidden group"
+        className="relative overflow-hidden group bg-transparent"
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
@@ -83,16 +98,47 @@ const ButtonSort = React.forwardRef<HTMLButtonElement, ButtonProps>(
           className={cn(buttonVariants({ variant, size, className }))}
           ref={ref}
           {...props}
-        />
+        >
+          <motion.div
+            animate={{ y: yReal }}
+            transition={{
+              duration: animationDuration,
+              ease: "easeInOut",
+              delay: 0.1,
+            }}
+            className="w-full h-full flex justify-center items-center text-white"
+          >
+            {props.children}
+          </motion.div>
+        </Comp>
         <motion.div
-          animate={{ y }}
+          animate={{ y: yMockTop }}
           transition={{
-            duration: 0.2,
+            duration: 0.5,
             ease: "easeInOut",
             delay: 0.1,
           }}
-          className="absolute inset-0 translate-y-full bg-white opacity-50 mix-blend-mode-multiply"
-        />
+          className={cn(
+            buttonVariants({ variant, size, className }),
+            "absolute flex justify-center z-20 inset-0 translate-y-full bg-black/0 border border-white pointer-events-none border-none"
+          )}
+        >
+          {props.children}
+        </motion.div>
+        <motion.div
+          animate={{ y: yMockBot }}
+          transition={{
+            duration: animationDuration,
+            ease: "easeInOut",
+            delay: 0.1,
+          }}
+          className={cn(
+            buttonVariants({ variant, size, className }),
+            "absolute flex justify-center z-20 inset-0 -translate-y-full bg-black/0 border border-white pointer-events-none border-none"
+          )}
+        >
+          {props.children}
+        </motion.div>
       </div>
     );
   }
@@ -104,8 +150,6 @@ const ButtonLink = React.forwardRef<HTMLButtonElement, ButtonProps>(
     { className, variant, size, asChild = false, emphaseLetter, ...props },
     ref
   ) => {
-    // const translateY = useMotionValue(0);
-    // hover:bg-black transition-all duration-300
     const [hovered, setHovered] = React.useState(false);
 
     const onMouseEnter = () => {
@@ -128,7 +172,7 @@ const ButtonLink = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {...props}
         >
           <div className="relative left-1">
-            <span className="relative z-10 group-hover:text-purple-400">
+            <span className="relative z-10 group-hover:text-purple-200">
               {emphaseLetter}
             </span>
             {hovered && (

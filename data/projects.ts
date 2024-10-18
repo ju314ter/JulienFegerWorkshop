@@ -34,7 +34,7 @@ export const data: SlideItem[] = [
   },
   {
     name: "loveOn",
-    titre: "Cliq Digital",
+    titre: "LoveOn",
     imgHeroUrl: "/img/matcher-min.jpg",
     imgUrl: [
       "/img/itsamatch-min.jpg",
@@ -135,7 +135,7 @@ export const data: SlideItem[] = [
       "/img/JFWP3-min.jpg",
       "/img/JFWP4-min.jpg",
     ],
-    description: "Mon premier portfolio.",
+    description: "Portfolio en soutient a mes recherches d'alternance",
     tags: ["NextJS", "React-spring"],
     framework: "React",
     websiteUrl: "https://www.cliqdigital.com",
@@ -153,7 +153,7 @@ export const data: SlideItem[] = [
       "/img/jf2021tech-min.jpg",
     ],
     description:
-      "Cliq est la plateforme de distribution multimedia en full branding de la société Cliq Digital.",
+      "Portfolio en soutient a mes recherches d'emploi en tant que junior",
     tags: ["NextJS", "React-spring"],
     framework: "React",
     websiteUrl: "https://nextjs-portfolio-v2-1n4szakm7-ju314ter.vercel.app/",
@@ -164,19 +164,14 @@ export const data: SlideItem[] = [
   {
     name: "JFW2024",
     titre: "Julien FEGER Fullstack Workshop",
-    imgHeroUrl: "/img/jf2021landing-min.jpg",
-    imgUrl: [
-      "/img/jf2021landing-min.jpg",
-      "/img/jf2021projects-min.jpg",
-      "/img/jf2021tech-min.jpg",
-    ],
-    description:
-      "Cliq est la plateforme de distribution multimedia en full branding de la société Cliq Digital.",
+    imgHeroUrl: "/img/jf2024landing-min.jpg",
+    imgUrl: [],
+    description: "Portfolio en tant que développeur fullstack",
     tags: ["NextJS", "Framer-motion", "Radix-ui", "Tailwindcss"],
     framework: "React",
     websiteUrl: "https://nextjs-portfolio-v2-1n4szakm7-ju314ter.vercel.app/",
     githubUrl: null,
-    date: "2021-09-01",
+    date: "2024-09-01",
     role: "Createur",
   },
   {
