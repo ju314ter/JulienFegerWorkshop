@@ -49,14 +49,13 @@ export default function Home() {
         const heroPos = heroRef.current?.offsetTop || 0;
 
         if (
-          Math.abs(scrollPos - heroPos) > 300 &&
-          Math.abs(scrollPos - workspacePos) > 300 &&
-          Math.abs(scrollPos - aboutmePos) > 300 &&
-          Math.abs(scrollPos - contactPos) > 300
+          Math.abs(scrollPos - heroPos) > 400 &&
+          Math.abs(scrollPos - workspacePos) > 400 &&
+          Math.abs(scrollPos - aboutmePos) > 400 &&
+          Math.abs(scrollPos - contactPos) > 400
         ) {
           snap.stop();
         } else {
-          console.log("snapping");
           snap.start();
         }
       };
@@ -83,10 +82,6 @@ export default function Home() {
     target: contactRef,
     offset: ["start end", "end end"],
   });
-
-  // useMotionValueEvent(scrollYProgressContact, "change", (x) => {
-  //   console.log(x);
-  // });
 
   const handleMouseScreen = (event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -128,7 +123,7 @@ export default function Home() {
     <ReactLenis ref={lenisRef} root>
       {/* Logo */}
       <div
-        className="fixed w-20 h-20 top-[2vw] left-[2vw] bg-black z-50 flex justify-center items-center p-2 cursor-pointer"
+        className="fixed w-10 h-10 md:w-16 md:h-16 top-[2vw] left-[2vw] bg-black z-50 flex justify-center items-center p-2 cursor-pointer"
         onClick={scrollToSection("hero")}
       >
         <Logo className="w-full h-full" />
@@ -269,7 +264,7 @@ export default function Home() {
           style={{
             opacity: useTransform(scrollYProgressAboutme, [0, 0.2], [0, 1]),
           }}
-          className="absolute inset-0 bg-black pointer-events-none"
+          className="absolute inset-0 z-20 bg-black pointer-events-none"
         ></motion.div>
       </motion.div>
 

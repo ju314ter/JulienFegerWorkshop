@@ -281,19 +281,16 @@
 
 .item:hover {
   filter: blur(0px) brightness(1);
-  width: 32vw;
   transform-origin: center;
 }
 
 .item:hover + * {
   filter: blur(1px) brightness(0.7);
-  width: 29vw;
   transform-origin: right;
 }
 
 .item:has(+ *:hover) {
   filter: blur(1px) brightness(0.7);
-  width: 29vw;
   transform-origin: left;
 }
 
