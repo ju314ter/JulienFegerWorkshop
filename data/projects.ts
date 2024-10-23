@@ -126,7 +126,7 @@ export const data: SlideItem[] = [
   },
   {
     name: "JFW2019",
-    titre: "Julien FEGER Alternant Workshop",
+    titre: "Julien FEGER Alternant",
     imgHeroUrl: "/img/JFWP-min.jpg",
     imgUrl: [
       "/img/JFWP-min.jpg",
@@ -145,7 +145,7 @@ export const data: SlideItem[] = [
   },
   {
     name: "JFW2021",
-    titre: "Julien FEGER Junior Workshop",
+    titre: "Julien FEGER Junior",
     imgHeroUrl: "/img/jf2021landing-min.jpg",
     imgUrl: [
       "/img/jf2021landing-min.jpg",
@@ -163,7 +163,7 @@ export const data: SlideItem[] = [
   },
   {
     name: "JFW2024",
-    titre: "Julien FEGER Fullstack Workshop",
+    titre: "Julien FEGER Fullstack",
     imgHeroUrl: "/img/jf2024landing-min.jpg",
     imgUrl: [],
     description: "Portfolio en tant que développeur fullstack",

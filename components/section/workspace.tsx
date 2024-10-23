@@ -38,6 +38,7 @@ const Workspace = () => {
   const [detailPageName, setDetailPageName] = useState<string | null>(null);
 
   const expandedCardRef = useRef<HTMLDivElement>(null);
+  const expandedImageRef = useRef<HTMLImageElement>(null);
   const offset = useTransform(positionPercent, [0, 1], [30, 70]);
   const controls = useAnimation();
 
@@ -55,13 +56,31 @@ const Workspace = () => {
     const elTo = document.querySelector("#target-dimensions");
     if (elTo) {
       const { x, y, width, height } = elTo.getBoundingClientRect();
-      controls.start({
-        top: y,
-        left: x,
-        height,
-        width,
-        transition: { duration: 0.5, delay: 0.2 }, // Adjust the duration as needed
-      });
+      const expandedImage = expandedImageRef.current;
+
+      if (
+        detailPageName === "loveOn" ||
+        detailPageName === "wikiTft" ||
+        detailPageName === "catalogueU"
+      ) {
+        controls.start({
+          top: y,
+          left: x,
+          height,
+          width: width,
+          transition: { duration: 0.5, delay: 0.2 },
+        });
+        if (expandedImage) expandedImageRef.current.style.objectFit = `contain`;
+      } else {
+        controls.start({
+          top: y,
+          left: x,
+          height,
+          width,
+          transition: { duration: 0.5, delay: 0.2 },
+        });
+        if (expandedImage) expandedImageRef.current.style.objectFit = `cover`;
+      }
     }
   }, [detailPageName, controls]);
 
@@ -242,12 +261,12 @@ const Workspace = () => {
       >
         {/* Closing button */}
         <motion.div
-          className="absolute z-20 right-[2vw] top-[2vw] cursor-pointer"
+          className="absolute z-20 right-[2vw] top-[2vw] cursor-pointer border border-white bg-black"
           onClick={closeDetailPage}
         >
           <motion.svg
-            width="48"
-            height="48"
+            width="64"
+            height="64"
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -273,7 +292,7 @@ const Workspace = () => {
         </motion.div>
 
         {/* main content */}
-        <div className="w-[100%] md:w-[60%] max-h-10">
+        <div className="w-[100%] md:w-[75%]  max-w-[1000px]">
           {/* target dimensions */}
           <AspectRatio
             ratio={16 / 9}
@@ -288,9 +307,11 @@ const Workspace = () => {
             <motion.div
               ref={expandedCardRef}
               animate={controls}
-              className="absolute bg-black border-2 border-white"
+              className="absolute bg-black border-2 border-white cursor-pointer"
             >
               <Image
+                ref={expandedImageRef}
+                onClick={closeDetailPage}
                 src={
                   detailPageName
                     ? sliderData.filter((el) => el.name === detailPageName)[0]
@@ -309,6 +330,25 @@ const Workspace = () => {
                 className={`absolute top-0 left-0 h-full object-cover`}
                 style={{ objectPosition: `${offset.get()}%` }}
               />
+              <motion.div
+                initial={{ y: "160%", opacity: 0 }}
+                animate={{ y: "120%", opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="absolute w-[100%] gap-10 flex flex-col justify-center items-start bottom-0 left-0 right-0h-10 "
+              >
+                <div className="w-full flex justify-between items-center">
+                  <div className="button w-[30%] h-10 bg-red-300"></div>
+                  <div className="button w-[30%] h-10 bg-red-300">
+                    Visiter l&apos;appli
+                  </div>
+                </div>
+                <motion.div
+                  initial={{ y: 10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.8 }}
+                  className="relative w-[100%] bottom-0 right-0 left-0 h-40 bg-black"
+                ></motion.div>
+              </motion.div>
             </motion.div>
           )}
         </div>
@@ -348,18 +388,6 @@ const ProjectCard: React.FC<{
       className="card relative flex justify-center h-full w-[90%] border-2 border-white"
       onClick={() => (!isDragging ? handleProjectSelected() : null)}
       data-flip-key={project.name}
-      // onMouseEnter={() => {
-      //   if (imageRef.current) {
-      //     const { x, y, width, height } =
-      //       imageRef.current.getBoundingClientRect();
-      //     onHover({
-      //       x,
-      //       y,
-      //       width,
-      //       height,
-      //     });
-      //   }
-      // }}
     >
       <Image
         ref={imageRef}

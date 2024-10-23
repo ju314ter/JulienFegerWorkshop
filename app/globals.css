@@ -265,16 +265,9 @@
   font-size: 1.5rem;
 }
 
-/* Translate Z/ perspective not working with drag */
-/* .list {
-  transform-style: preserve-3d;
-  transform: perspective(4000px);
-  transform-origin: center center;
-} */
-
 .item {
   filter: blur(1px) brightness(0.4);
-  width: 30vw;
+  width: 20vw;
   min-width: 300px;
   transition: all 0.3s ease-in-out;
 }
