@@ -8,6 +8,8 @@ import Workspace from "@/components/section/workspace";
 import Logo from "@/components/ui/logo";
 import { LenisRef, ReactLenis, useLenis } from "lenis/react";
 import Snap from "lenis/snap";
+import ContactForm from "@/components/ui/contact-form";
+import { DraggableCards } from "@/components/ui/draggableCards";
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -38,6 +40,7 @@ export default function Home() {
       snap.addElement(heroRef.current);
       snap.addElement(workspaceRef.current);
       snap.addElement(aboutMeRef.current);
+      // snap.add(aboutMeRef.current.offsetTop + 100);
       snap.addElement(contactRef.current);
 
       // For finer control, you can also track scroll position and enable/disable snap
@@ -123,7 +126,7 @@ export default function Home() {
     <ReactLenis ref={lenisRef} root>
       {/* Logo */}
       <div
-        className="fixed w-10 h-10 md:w-16 md:h-16 top-[2vw] left-[2vw] bg-black z-50 flex justify-center items-center p-2 cursor-pointer"
+        className="fixed w-10 h-10 md:w-16 md:h-16 top-[2vw] left-[2vw] bg-neutral-950 z-50 flex justify-center items-center p-2 cursor-pointer"
         onClick={scrollToSection("hero")}
       >
         <Logo className="w-full h-full" />
@@ -139,7 +142,7 @@ export default function Home() {
         }}
         transition={{ duration: 0.3, delay: 0.2 }}
         onMouseMove={handleMouseScreen}
-        className="hero-section bg-violet-700 relative overflow-hidden h-[100vh] w-full flex flex-col items-center justify-start perspective-deep"
+        className="hero-section relative overflow-hidden h-[100vh] w-full flex flex-col items-center justify-start perspective-deep"
       >
         <motion.div
           style={{
@@ -253,8 +256,10 @@ export default function Home() {
       <motion.div
         className="w-full relative h-[100vh] flex flex-col items-center overflow-hidden border-t-2 border-white"
         style={{
-          backgroundImage: "url('/projectbackground-min1.jpg')",
+          background:
+            "linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.9)), url('/projectbackground-min1.jpg')",
           backgroundSize: "cover",
+          filter: "brigthness(0.1)",
         }}
         id="showcase"
         ref={workspaceRef}
@@ -264,27 +269,93 @@ export default function Home() {
           style={{
             opacity: useTransform(scrollYProgressAboutme, [0, 0.2], [0, 1]),
           }}
-          className="absolute inset-0 z-20 bg-black pointer-events-none"
+          className="absolute inset-0 z-20 bg-neutral-950 pointer-events-none"
         ></motion.div>
       </motion.div>
 
       {/* About me section */}
       <motion.div
-        className="w-full h-[200vh] bg-purple-300 relative"
+        className="w-full min-h-[100vh] mt-[5vh] bg-neutral-950"
         id="aboutme"
         ref={aboutMeRef}
       >
-        <div className="w-full h-full text-white bg-black flex flex-col items-center justify-start">
-          <h1 className="mt-[10vh]">About me...</h1>
-          <div>
-            Hello ! I&apos;m a french JS developper based in Nantes, France.
+        <div className="w-full h-full text-white flex flex-col items-center justify-start">
+          <div className="relative example-5 mt-[5vh] max-w-[60vw]">
+            <motion.div
+              style={{
+                opacity: useTransform(
+                  scrollYProgressAboutme,
+                  [0.3, 0.4],
+                  [1, 0]
+                ),
+              }}
+            >
+              <Image
+                src="/aboutme-min.jpg"
+                alt="background"
+                width={2908}
+                height={1638}
+                className="h-full w-full object-cover object-bottom rounded-xl"
+              />
+            </motion.div>
+
+            <motion.svg
+              style={{
+                opacity: useTransform(
+                  scrollYProgressAboutme,
+                  [0.3, 0.4],
+                  [0, 1]
+                ),
+              }}
+              height="100%"
+              width="100%"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                rx="8"
+                ry="8"
+                className="line translate-y-[25%]"
+                height="50%"
+                width="100%"
+                strokeLinejoin="round"
+              />
+            </motion.svg>
+
+            <div
+              style={{
+                backgroundImage: "url('/aboutme-min.jpg')",
+                backgroundSize: "cover",
+                backgroundClip: "text",
+              }}
+              className="absolute font-black text-transparent inset-0 text-[calc(10vw)] flex justify-center items-center"
+            >
+              About me
+            </div>
           </div>
-          <div className="m-w-[500px] align-left">
-            Hello, I&apos;m a french JS developper with a <b>strong</b> passion
-            to design, code and create stuff. Not only am I passionate about new
-            tech, but also favor all kinds of arts and am well versed with
-            socials problematics.
+
+          <div className="col mt-[5vh] w-full max-w-[60vw] mx-auto">
+            <div className="w-full align-left text-4xl mb-10">
+              Je suis un développeur français basé à Nantes, France.
+            </div>
+            <div className="w-full align-left text-2xl leading-10">
+              En tant que développeur, cela fait plus de 4ans que je pratique le
+              design, tant graphique que technique, et le clean-code afin de
+              produire une solution élégante et créative, que ce soit pour mes
+              projets perso ou pour le boulot.
+            </div>
+            <div className="w-full align-left text-2xl leading-10">
+              Je suis passionné de nouvelles technologies, mais également très
+              familier des problématiques sociales.
+            </div>
           </div>
+        </div>
+
+        <section className="relative grid min-h-screen w-[80vw] mx-auto place-content-center">
+          <DraggableCards />
+        </section>
+
+        <div className="text-white mt-[5vh] w-full max-w-[60vw] mx-auto">
+          tech i use for work/fun
         </div>
       </motion.div>
 
@@ -329,36 +400,10 @@ export default function Home() {
           style={{
             opacity: useTransform(scrollYProgressContact, [1, 0], [0, 1]),
           }}
-          className="absolute z-30 inset-0 bg-black pointer-events-none"
+          className="absolute z-30 inset-0 bg-neutral-950 pointer-events-none"
         ></motion.div>
 
-        <div className="w-[60%] h-[60%] bg-black/50 backdrop-blur-xl flex flex-col rounded-tl-md rounded-tr-md shadow-xl">
-          <div className="relative h-10 w-full bg-[#121728] rounded-tl-md rounded-tr-md flex justify-center">
-            <div className="absolute top-0 left-0 w-24 h-full flex justify-center items-center gap-2 rounded-tl-md">
-              <div
-                className="w-4 h-4 rounded-full bg-red-500 cursor-pointer"
-                onClick={scrollToSection("hero")}
-              ></div>
-              <div
-                className="w-4 h-4 rounded-full bg-orange-500 cursor-pointer"
-                onClick={scrollToSection("workspace")}
-              ></div>
-              <div
-                className="w-4 h-4 rounded-full bg-green-500 cursor-pointer"
-                onClick={() => alert("Call me baby")}
-              ></div>
-            </div>
-            <div className="h-full flex justify-center items-center text-white">
-              julien.feger@gmail.com
-            </div>
-          </div>
-          <div className="p-4 flex flex-col gap-2 w-full text-white">
-            <span>Salut ! Je m&apos;apelle ...</span>
-            <span>Je suis ...</span>
-            <span>J&apos;aimerais te parler de ...</span>
-            <span>A bientôt !</span>
-          </div>
-        </div>
+        <ContactForm />
       </motion.div>
     </ReactLenis>
   );

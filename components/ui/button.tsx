@@ -12,7 +12,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-black text-primary-foreground",
         projectSort:
-          "cursor-pointer bg-transparent text-white hover:text-black duration-300 h-[5rem] rounded-none text-xl md:text-3xl font-bold text-center border-2 border-white p-4",
+          "cursor-pointer bg-transparent text-white hover:text-black duration-300 h-full w-[5vw] rounded-none text-xl md:text-3xl font-bold text-center p-4",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
@@ -90,10 +90,19 @@ const ButtonSort = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : "button";
     return (
       <div
-        className="relative overflow-hidden group bg-transparent"
+        className="relative h-[4rem] md:h-[5rem] min-w-32 overflow-hidden group bg-transparent"
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
+        <span className="bg-purple-300 absolute left-[1px] top-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-top" />
+        <span className="bg-purple-300 absolute left-[1px] top-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-left" />
+        <span className="bg-purple-300 absolute right-[1px] top-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-top" />
+        <span className="bg-purple-300 absolute right-[1px] top-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-right" />
+        <span className="bg-purple-300 absolute left-[1px] bottom-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-bottom" />
+        <span className="bg-purple-300 absolute left-[1px] bottom-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-left" />
+        <span className="bg-purple-300 absolute right-[1px] bottom-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-bottom" />
+        <span className="bg-purple-300 absolute right-[1px] bottom-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-right" />
+
         <Comp
           className={cn(buttonVariants({ variant, size, className }))}
           ref={ref}

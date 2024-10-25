@@ -267,8 +267,6 @@
 
 .item {
   filter: blur(1px) brightness(0.4);
-  width: 20vw;
-  min-width: 300px;
   transition: all 0.3s ease-in-out;
 }
 
@@ -311,5 +309,47 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+/* Define the keyframes for the cursor animation */
+@keyframes flicker {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.cursor {
+  display: inline-block;
+  width: 2ch;
+  animation: flicker 0.75s infinite;
+}
+
+.example-5 svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.example-5 .line {
+  stroke-dasharray: 260;
+  stroke-width: 2px;
+  fill: transparent;
+  stroke: rgba(216, 180, 254, 0.3);
+  animation: svgAnimation 7.5s linear infinite;
+}
+
+@keyframes svgAnimation {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 1000;
   }
 }

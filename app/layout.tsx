@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="overflow-y-scroll overflow-x-hidden">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans h-[100vh] bg-violet-700 antialiased relative`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans h-[100vh] bg-neutral-950 antialiased relative`}
       >
         <div className="noise pointer-events-none"></div>
         {children}
