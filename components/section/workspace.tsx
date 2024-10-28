@@ -10,7 +10,13 @@ import {
   useTransform,
   useVelocity,
 } from "framer-motion";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Image from "next/image";
 import { cn, shuffleArray } from "@/lib/utils";
 import { Button, ButtonSort } from "../ui/button";
@@ -97,14 +103,54 @@ const Workspace = () => {
     setTimeout(() => setDetailPageName(null), 300);
   }, [controls]);
 
+  // Memoize slider data transformations
+  const sortData = useCallback((sort: string) => {
+    const sortFunctions = {
+      date: (data: SlideItem[]) =>
+        [...data].sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        ),
+      eco: (data: SlideItem[]) =>
+        [...data].sort((a, b) => {
+          const ecosystemDiff = a.framework.localeCompare(b.framework);
+          return ecosystemDiff !== 0
+            ? ecosystemDiff
+            : new Date(b.date).getTime() - new Date(a.date).getTime();
+        }),
+      role: (data: SlideItem[]) =>
+        [...data].sort((a, b) => {
+          const roleDiff = b.role.localeCompare(a.role);
+          return roleDiff !== 0
+            ? roleDiff
+            : new Date(b.date).getTime() - new Date(a.date).getTime();
+        }),
+      random: (data: SlideItem[]) => shuffleArray([...data]),
+    };
+
+    const sortFunction = sortFunctions[sort as keyof typeof sortFunctions];
+    if (sortFunction) {
+      setSliderData(sortFunction(data));
+    }
+  }, []);
+
+  // Debounce drag handling
+  const debouncedSetDragging = useCallback((value: boolean) => {
+    requestAnimationFrame(() => setIsDragging(value));
+  }, []);
+
   // Initialize state
   useEffect(() => {
+    let resizeTimeout: NodeJS.Timeout;
+
     const handleResize = () => {
-      const containerWidth = workspaceSliderRef.current?.offsetWidth || 0;
-      const parentWidth =
-        workspaceSliderRef.current?.parentElement?.clientWidth || 0;
-      setSliderWidth(containerWidth - parentWidth / 2);
-      isViewportBelowMd(window.innerWidth < 600);
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        const containerWidth = workspaceSliderRef.current?.offsetWidth || 0;
+        const parentWidth =
+          workspaceSliderRef.current?.parentElement?.clientWidth || 0;
+        setSliderWidth(containerWidth - parentWidth / 2);
+        isViewportBelowMd(window.innerWidth < 600);
+      }, 150); // Debounce resize events
     };
 
     const handleEscapeKey = (event: KeyboardEvent) => {
@@ -113,63 +159,23 @@ const Workspace = () => {
       }
     };
 
-    handleResize(); // Set initial width
-    sortData("date"); // set initial sort to date sorting
+    handleResize();
+    sortData("date");
 
     window.addEventListener("resize", handleResize);
     window.addEventListener("keydown", handleEscapeKey);
 
     return () => {
-      window.removeEventListener("keydown", handleEscapeKey);
+      clearTimeout(resizeTimeout);
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("keydown", handleEscapeKey);
     };
-  }, [closeDetailPage]);
+  }, [closeDetailPage, sortData]);
 
   // update sort slider visibility on slider drag
   useMotionValueEvent(sliderOffset, "change", (x) => {
     return x < -100 ? setHideSortSlider(true) : setHideSortSlider(false);
   });
-
-  const sortData = (sort: string) => {
-    switch (sort) {
-      case "date":
-        setSliderData(
-          [...data].sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-          )
-        );
-        break;
-      case "eco":
-        setSliderData(
-          [...data].sort((a, b) => {
-            const ecosystemDiff = a.framework.localeCompare(b.framework);
-            if (ecosystemDiff !== 0) {
-              return ecosystemDiff;
-            } else {
-              return new Date(b.date).getTime() - new Date(a.date).getTime();
-            }
-          })
-        );
-        break;
-      case "role":
-        setSliderData(
-          [...data].sort((a, b) => {
-            const roleDiff = b.role.localeCompare(a.role);
-            if (roleDiff !== 0) {
-              return roleDiff;
-            } else {
-              return new Date(b.date).getTime() - new Date(a.date).getTime();
-            }
-          })
-        );
-        break;
-      case "random":
-        setSliderData(shuffleArray([...data]));
-        break;
-      default:
-        break;
-    }
-  };
 
   return (
     <>
@@ -213,8 +219,8 @@ const Workspace = () => {
           id="showcase"
           ref={workspaceSliderRef}
           drag="x"
-          onDrag={() => setIsDragging(true)}
-          onDragEnd={() => setIsDragging(false)}
+          onDrag={() => debouncedSetDragging(true)}
+          onDragEnd={() => debouncedSetDragging(false)}
           dragConstraints={{ left: -sliderWidth, right: 0 }}
           style={{ x: sliderOffset }}
           className="scrollable-projects-wrapper overflow-visible h-[90%] inline-flex items-center"
@@ -446,152 +452,262 @@ const Workspace = () => {
   );
 };
 
-const ProjectCard: React.FC<{
+const ProjectCard = React.memo<{
   project: SlideItem;
   positionPercent: MotionValue<number>;
   onPageSelected: (name: string) => void;
   isPageSelected: boolean;
   isDragging: boolean;
-}> = ({
-  project,
-  positionPercent,
-  onPageSelected,
-  isPageSelected,
-  isDragging,
-}) => {
-  const imageRef = useRef<HTMLImageElement>(null);
-  const offset = useTransform(positionPercent, [0, 1], [30, 70]);
-  const { dominantColor, lighterColor } = useExtractColors(project.imgHeroUrl, {
-    format: "hex",
-  });
+}>(
+  ({
+    project,
+    positionPercent,
+    onPageSelected,
+    isPageSelected,
+    isDragging,
+  }) => {
+    const imageRef = useRef<HTMLImageElement>(null);
+    const offset = useTransform(positionPercent, [0, 1], [30, 70]);
+    const { dominantColor, lighterColor } = useExtractColors(
+      project.imgHeroUrl,
+      {
+        format: "hex",
+      }
+    );
 
-  useMotionValueEvent(offset, "change", (x) => {
-    if (imageRef.current) {
-      imageRef.current.style.objectPosition = `${x}%`;
-    }
-  });
+    useMotionValueEvent(offset, "change", (x) => {
+      if (imageRef.current) {
+        requestAnimationFrame(() => {
+          imageRef.current!.style.objectPosition = `${x}%`;
+        });
+      }
+    });
 
-  const handleProjectSelected = () => {
-    onPageSelected(project.name);
-  };
+    const handleProjectSelected = useCallback(() => {
+      if (!isDragging) {
+        onPageSelected(project.name);
+      }
+    }, [isDragging, onPageSelected, project.name]);
 
-  return (
-    <div
-      className="card group relative flex justify-center h-full w-[90%] rounded-md"
-      onClick={() => (!isDragging ? handleProjectSelected() : null)}
-      data-flip-key={project.name}
-    >
-      <Image
-        ref={imageRef}
-        src={project.imgHeroUrl}
-        alt={project.description}
-        width={2000}
-        height={1000}
-        draggable={false}
-        className={`absolute z-10 top-0 left-0 h-full object-cover rounded-md`}
-      />
-      {!isPageSelected && (
+    // Memoize static JSX elements
+    const cardDecorations = useMemo(
+      () => (
         <>
-          <div
-            style={{ backgroundColor: dominantColor + "44 " || "" }}
-            className={`absolute rounded-tl-md z-0 py-5 w-full border-md top-0 opacity-0 scale-50 group-hover:translate-y-[-105%] group-hover:scale-100 group-hover:opacity-100 flex flex-col items-center justify-center transition-all duration-300`}
-          >
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute left-[1px] top-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-top"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute left-[1px] top-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-left"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute right-[1px] top-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-top"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute right-[1px] top-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-right"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute left-[1px] bottom-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-bottom"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute left-[1px] bottom-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-left"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute right-[1px] bottom-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-bottom"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute right-[1px] bottom-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-right"
-            />
-
-            <span className="text-white text-3xl flex justify-center items-center text-center">
-              {project.titre}
-            </span>
-            <span className="text-white text-xl">{project.framework}</span>
-          </div>
-          <div
-            style={{ backgroundColor: dominantColor + "44" || "" }}
-            className="absolute rounded-tl-md z-0 py-5 w-full border-md bottom-0 opacity-0 scale-50 group-hover:translate-y-[105%] group-hover:scale-100 group-hover:opacity-100 flex flex-col items-center justify-center transition-all duration-300"
-          >
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute left-[1px] top-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-top"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute left-[1px] top-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-left"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute right-[1px] top-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-top"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute right-[1px] top-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-right"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute left-[1px] bottom-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-bottom"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute left-[1px] bottom-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-left"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute right-[1px] bottom-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-bottom"
-            />
-            <span
-              style={{ backgroundColor: lighterColor || "" }}
-              className="absolute right-[1px] bottom-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-right"
-            />
-            <span className="text-white text-2xl">{project.role}</span>
-          </div>
+          <span
+            style={{ backgroundColor: lighterColor || "" }}
+            className="absolute left-[1px] top-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-top"
+          />
+          <span
+            style={{ backgroundColor: lighterColor || "" }}
+            className="absolute left-[1px] top-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-left"
+          />
+          <span
+            style={{ backgroundColor: lighterColor || "" }}
+            className="absolute right-[1px] top-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-top"
+          />
+          <span
+            style={{ backgroundColor: lighterColor || "" }}
+            className="absolute right-[1px] top-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-right"
+          />
+          <span
+            style={{ backgroundColor: lighterColor || "" }}
+            className="absolute left-[1px] bottom-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-bottom"
+          />
+          <span
+            style={{ backgroundColor: lighterColor || "" }}
+            className="absolute left-[1px] bottom-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-left"
+          />
+          <span
+            style={{ backgroundColor: lighterColor || "" }}
+            className="absolute right-[1px] bottom-[1px] z-10 h-3 w-[1px] transition-all duration-500 scale-0 group-hover:scale-100 origin-bottom"
+          />
+          <span
+            style={{ backgroundColor: lighterColor || "" }}
+            className="absolute right-[1px] bottom-[1px] z-10 h-[1px] w-3 transition-all duration-500 scale-0 group-hover:scale-100 origin-right"
+          />
         </>
-      )}
-    </div>
-  );
-};
+      ),
+      [lighterColor]
+    );
 
-const ProjectCandle: React.FC<{
+    return (
+      <div
+        className="card group relative flex justify-center h-full w-[90%] rounded-md"
+        onClick={handleProjectSelected}
+        data-flip-key={project.name}
+      >
+        <Image
+          ref={imageRef}
+          src={project.imgHeroUrl}
+          alt={project.description}
+          width={1200}
+          height={800}
+          draggable={false}
+          loading="lazy"
+          className="absolute z-10 top-0 left-0 h-full object-cover rounded-md"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+        {!isPageSelected && (
+          <>
+            <div
+              style={{ backgroundColor: dominantColor + "44 " || "" }}
+              className="absolute rounded-tl-md z-0 py-5 w-full border-md top-0 opacity-0 scale-50 group-hover:translate-y-[-105%] group-hover:scale-100 group-hover:opacity-100 flex flex-col items-center justify-center transition-all duration-300"
+            >
+              {cardDecorations}
+              <span className="text-white text-3xl flex justify-center items-center text-center">
+                {project.titre}
+              </span>
+              <span className="text-white text-xl">{project.framework}</span>
+            </div>
+            <div
+              style={{ backgroundColor: dominantColor + "44" || "" }}
+              className="absolute rounded-tl-md z-0 py-5 w-full border-md bottom-0 opacity-0 scale-50 group-hover:translate-y-[105%] group-hover:scale-100 group-hover:opacity-100 flex flex-col items-center justify-center transition-all duration-300"
+            >
+              {cardDecorations}
+              <span className="text-white text-2xl">{project.role}</span>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+);
+ProjectCard.displayName = "ProjectCard";
+
+// const ProjectCard: React.FC<{
+//   project: SlideItem;
+//   positionPercent: MotionValue<number>;
+//   onPageSelected: (name: string) => void;
+//   isPageSelected: boolean;
+//   isDragging: boolean;
+// }> = ({
+//   project,
+//   positionPercent,
+//   onPageSelected,
+//   isPageSelected,
+//   isDragging,
+// }) => {
+//   const imageRef = useRef<HTMLImageElement>(null);
+//   const offset = useTransform(positionPercent, [0, 1], [30, 70]);
+//   const { dominantColor, lighterColor } = useExtractColors(project.imgHeroUrl, {
+//     format: "hex",
+//   });
+
+//   useMotionValueEvent(offset, "change", (x) => {
+//     if (imageRef.current) {
+//       imageRef.current.style.objectPosition = `${x}%`;
+//     }
+//   });
+
+//   const handleProjectSelected = () => {
+//     onPageSelected(project.name);
+//   };
+
+//   return (
+//     <div
+//       className="card group relative flex justify-center h-full w-[90%] rounded-md"
+//       onClick={() => (!isDragging ? handleProjectSelected() : null)}
+//       data-flip-key={project.name}
+//     >
+//       <Image
+//         ref={imageRef}
+//         src={project.imgHeroUrl}
+//         alt={project.description}
+//         width={1200}
+//         height={800}
+//         draggable={false}
+//         className={`absolute z-10 top-0 left-0 h-full object-cover rounded-md`}
+//       />
+//       {!isPageSelected && (
+//         <>
+//           <div
+//             style={{ backgroundColor: dominantColor + "44 " || "" }}
+//             className={`absolute rounded-tl-md z-0 py-5 w-full border-md top-0 opacity-0 scale-50 group-hover:translate-y-[-105%] group-hover:scale-100 group-hover:opacity-100 flex flex-col items-center justify-center transition-all duration-300`}
+//           >
+//             <span className="text-white text-3xl flex justify-center items-center text-center">
+//               {project.titre}
+//             </span>
+//             <span className="text-white text-xl">{project.framework}</span>
+//           </div>
+//           <div
+//             style={{ backgroundColor: dominantColor + "44" || "" }}
+//             className="absolute rounded-tl-md z-0 py-5 w-full border-md bottom-0 opacity-0 scale-50 group-hover:translate-y-[105%] group-hover:scale-100 group-hover:opacity-100 flex flex-col items-center justify-center transition-all duration-300"
+//           >
+//             <span className="text-white text-2xl">{project.role}</span>
+//           </div>
+//         </>
+//       )}
+//     </div>
+//   );
+// };
+
+// const ProjectCandle: React.FC<{
+//   index: number;
+//   velocityPercent: MotionValue<number>;
+//   positionPercent: MotionValue<number>;
+//   totalItems: number;
+// }> = ({ index, velocityPercent, positionPercent, totalItems }) => {
+//   const baseHeight = 16;
+//   const height = useMotionValue(baseHeight);
+//   const minScale = 1; // Minimum scale value
+//   const maxScale = 10; // Maximum scale value
+
+//   const motionIndex = useMotionValue(index);
+//   const indexPercent = useTransform(motionIndex, [0, totalItems], [0, 1]);
+
+//   const scalingFactor = useMotionValue(
+//     minScale +
+//       (maxScale - minScale) *
+//         (1 - Math.abs(indexPercent.get() - positionPercent.get()))
+//   );
+
+//   const violet = (saturation: number) => `hsl(340, ${saturation}%, 75%)`;
+//   const backgroundColor = useTransform(
+//     scalingFactor,
+//     [minScale, maxScale],
+//     [violet(0), violet(100)]
+//   );
+//   const opacity = useTransform(scalingFactor, [minScale, maxScale], [0, 0.5]);
+
+//   useMotionValueEvent(velocityPercent, "change", (x) => {
+//     // Apply the scaling factor to the range
+//     const scale =
+//       minScale +
+//       (maxScale - minScale) *
+//         (1 - Math.abs(indexPercent.get() - positionPercent.get()));
+
+//     scalingFactor.set(scale);
+//     height.set(baseHeight + x * scale * scale);
+//   });
+
+//   return (
+//     <motion.div
+//       style={{
+//         height,
+//         transformOrigin: "center bottom",
+//         backgroundColor,
+//         opacity,
+//       }}
+//       className="text-white flex grow w-12 overflow-hidden p-2 border-t-2 border-white"
+//     >
+//       <span className="relative top-4">{index}</span>
+//     </motion.div>
+//   );
+// };
+
+const ProjectCandle = React.memo<{
   index: number;
   velocityPercent: MotionValue<number>;
   positionPercent: MotionValue<number>;
   totalItems: number;
-}> = ({ index, velocityPercent, positionPercent, totalItems }) => {
+}>(({ index, velocityPercent, positionPercent, totalItems }) => {
   const baseHeight = 16;
   const height = useMotionValue(baseHeight);
-  const minScale = 1; // Minimum scale value
-  const maxScale = 10; // Maximum scale value
+  const minScale = 1;
+  const maxScale = 10;
 
   const motionIndex = useMotionValue(index);
   const indexPercent = useTransform(motionIndex, [0, totalItems], [0, 1]);
-
   const scalingFactor = useMotionValue(
     minScale +
       (maxScale - minScale) *
@@ -607,14 +723,14 @@ const ProjectCandle: React.FC<{
   const opacity = useTransform(scalingFactor, [minScale, maxScale], [0, 0.5]);
 
   useMotionValueEvent(velocityPercent, "change", (x) => {
-    // Apply the scaling factor to the range
-    const scale =
-      minScale +
-      (maxScale - minScale) *
-        (1 - Math.abs(indexPercent.get() - positionPercent.get()));
-
-    scalingFactor.set(scale);
-    height.set(baseHeight + x * scale * scale);
+    requestAnimationFrame(() => {
+      const scale =
+        minScale +
+        (maxScale - minScale) *
+          (1 - Math.abs(indexPercent.get() - positionPercent.get()));
+      scalingFactor.set(scale);
+      height.set(baseHeight + x * scale * scale);
+    });
   });
 
   return (
@@ -624,12 +740,15 @@ const ProjectCandle: React.FC<{
         transformOrigin: "center bottom",
         backgroundColor,
         opacity,
+        willChange: "transform",
       }}
       className="text-white flex grow w-12 overflow-hidden p-2 border-t-2 border-white"
     >
       <span className="relative top-4">{index}</span>
     </motion.div>
   );
-};
+});
+
+ProjectCandle.displayName = "ProjectCandle";
 
 export default Workspace;
