@@ -246,7 +246,7 @@ const Workspace = () => {
                   onPageSelected={setDetailPageName}
                   isPageSelected={detailPageName === project.name}
                   isDragging={isDragging}
-                  isViewportBelowMd={isViewportBelowMd}
+                  isViewportBelowMd={viewportBelowMd}
                 />
               </motion.li>
             ))}
