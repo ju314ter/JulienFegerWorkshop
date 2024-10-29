@@ -37,24 +37,24 @@ export default function Home() {
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // custom easing
       });
 
-      snap.addElement(heroRef.current);
-      snap.addElement(workspaceRef.current);
-      snap.addElement(aboutMeRef.current);
+      // snap.addElement(heroRef.current);
+      // snap.addElement(workspaceRef.current);
+      // snap.addElement(aboutMeRef.current);
       // snap.add(aboutMeRef.current.offsetTop + 100);
       snap.addElement(contactRef.current);
 
       // For finer control, you can also track scroll position and enable/disable snap
       const handleScroll = () => {
         const scrollPos = window.scrollY;
-        const workspacePos = workspaceRef.current?.offsetTop || 0;
-        const aboutmePos = aboutMeRef.current?.offsetTop || 0;
+        // const workspacePos = workspaceRef.current?.offsetTop || 0;
+        // const aboutmePos = aboutMeRef.current?.offsetTop || 0;
+        // const heroPos = heroRef.current?.offsetTop || 0;
         const contactPos = contactRef.current?.offsetTop || 0;
-        const heroPos = heroRef.current?.offsetTop || 0;
 
         if (
-          Math.abs(scrollPos - heroPos) > 400 &&
-          Math.abs(scrollPos - workspacePos) > 400 &&
-          Math.abs(scrollPos - aboutmePos) > 400 &&
+          // Math.abs(scrollPos - heroPos) > 400 &&
+          // Math.abs(scrollPos - workspacePos) > 400 &&
+          // Math.abs(scrollPos - aboutmePos) > 400 &&
           Math.abs(scrollPos - contactPos) > 400
         ) {
           snap.stop();
