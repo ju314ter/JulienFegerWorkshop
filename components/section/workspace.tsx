@@ -149,7 +149,7 @@ const Workspace = () => {
         const parentWidth =
           workspaceSliderRef.current?.parentElement?.clientWidth || 0;
         setSliderWidth(containerWidth - parentWidth / 2);
-        isViewportBelowMd(window.innerWidth < 768);
+        isViewportBelowMd(window.innerWidth < 1024);
       }, 150); // Debounce resize events
     };
 

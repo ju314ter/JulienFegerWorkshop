@@ -38,7 +38,7 @@ export default function Home() {
       });
 
       // snap.addElement(heroRef.current);
-      // snap.addElement(workspaceRef.current);
+      snap.addElement(workspaceRef.current);
       // snap.addElement(aboutMeRef.current);
       // snap.add(aboutMeRef.current.offsetTop + 100);
       snap.addElement(contactRef.current);
