@@ -246,6 +246,7 @@ const Workspace = () => {
                   onPageSelected={setDetailPageName}
                   isPageSelected={detailPageName === project.name}
                   isDragging={isDragging}
+                  isViewportBelowMd={isViewportBelowMd}
                 />
               </motion.li>
             ))}
@@ -458,6 +459,7 @@ const ProjectCard = React.memo<{
   onPageSelected: (name: string) => void;
   isPageSelected: boolean;
   isDragging: boolean;
+  isViewportBelowMd: boolean;
 }>(
   ({
     project,
@@ -465,6 +467,7 @@ const ProjectCard = React.memo<{
     onPageSelected,
     isPageSelected,
     isDragging,
+    isViewportBelowMd,
   }) => {
     const imageRef = useRef<HTMLImageElement>(null);
     const offset = useTransform(positionPercent, [0, 1], [30, 70]);
@@ -476,6 +479,7 @@ const ProjectCard = React.memo<{
     );
 
     useMotionValueEvent(offset, "change", (x) => {
+      if (isViewportBelowMd) return;
       if (imageRef.current) {
         requestAnimationFrame(() => {
           imageRef.current!.style.objectPosition = `${x}%`;
