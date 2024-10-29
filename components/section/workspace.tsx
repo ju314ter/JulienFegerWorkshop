@@ -140,7 +140,7 @@ const Workspace = () => {
 
   // Initialize state
   useEffect(() => {
-    let resizeTimeout: NodeJS.Timeout;
+    let resizeTimeout: NodeJS.Timeout; // for debouncing
 
     const handleResize = () => {
       clearTimeout(resizeTimeout);
