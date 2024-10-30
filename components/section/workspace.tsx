@@ -30,10 +30,6 @@ const Workspace = () => {
   const isMobile = useMediaQuery("(max-width: 700px)");
   const isTablet = useMediaQuery("(max-width: 1024px)");
 
-  useEffect(() => {
-    console.log("viewport", isMobile, isTablet);
-  }, [isMobile, isTablet]);
-
   const workspaceSliderRef = useRef<HTMLDivElement>(null);
   const [sliderData, setSliderData] = useState<SlideItem[]>(data);
   const [sliderWidth, setSliderWidth] = useState(0);
@@ -180,9 +176,7 @@ const Workspace = () => {
 
   // update sort slider visibility on slider drag
   useMotionValueEvent(sliderOffset, "change", (x) => {
-    const condition = x < -100;
-    console.log(condition);
-    return condition ? setHideSortSlider(true) : setHideSortSlider(false);
+    return x < -100 ? setHideSortSlider(true) : setHideSortSlider(false);
   });
 
   return (
@@ -359,7 +353,11 @@ const Workspace = () => {
                 height={1000}
                 draggable={false}
                 className={`absolute top-0 left-0 h-full object-cover`}
-                style={{ objectPosition: `${offset.get()}%` }}
+                style={{
+                  objectPosition: `${
+                    isMobile || isTablet ? 50 : offset.get()
+                  }%`,
+                }}
               />
               {/* Content hiden at first */}
               <motion.div
