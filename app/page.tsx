@@ -2,7 +2,13 @@
 
 import { ButtonLink } from "@/components/ui/button";
 import Image from "next/image";
-import { useMotionValue, useTransform, motion, useScroll } from "framer-motion";
+import {
+  useMotionValue,
+  useTransform,
+  motion,
+  useScroll,
+  MotionValue,
+} from "framer-motion";
 import { useEffect, useRef } from "react";
 import Workspace from "@/components/section/workspace";
 import Logo from "@/components/ui/logo";
@@ -10,16 +16,25 @@ import { LenisRef, ReactLenis, useLenis } from "lenis/react";
 import Snap from "lenis/snap";
 import ContactForm from "@/components/ui/contact-form";
 import { DraggableCards } from "@/components/ui/draggableCards";
+import { useMediaQuery } from "@/hooks/use-media-query";
+
+const cursorHeroAnimationConfig = {
+  rotateX: [-2, 2],
+  rotateY: [5, -5],
+  translateX: [-10, 10],
+  blur: ["blur(20px)", "blur(5px)", "blur(0px)", "blur(5px)", "blur(10px)"],
+};
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const aboutMeRef = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isTablet = useMediaQuery("(max-width: 1024px)");
+
   const lenisRef = useRef<LenisRef>(null);
-
   const lenis = useLenis();
-
   useEffect(() => {
     if (
       lenisRef.current &&
@@ -30,43 +45,52 @@ export default function Home() {
       contactRef.current
     ) {
       const snap = new Snap(lenis, {
-        type: "proximity", // 'mandatory' or 'proximity'
-        velocityThreshold: 0.5, // increase this to require more deliberate scrolling
-        lerp: 0.05, // lower value = smoother snap animation
-        duration: 1, // duration of snap animation in seconds
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // custom easing
+        type: isMobile ? "mandatory" : "proximity",
+        velocityThreshold: isMobile ? 0.3 : 0.5,
+        lerp: isMobile ? 0.1 : 0.05,
+        duration: isMobile ? 0.8 : 1,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       });
 
+      // Only add snap points on non-mobile
+
       // snap.addElement(heroRef.current);
-      snap.addElement(workspaceRef.current);
       // snap.addElement(aboutMeRef.current);
       // snap.add(aboutMeRef.current.offsetTop + 100);
-      snap.addElement(contactRef.current);
+      if (!isMobile) {
+        snap.addElement(workspaceRef.current);
+        snap.addElement(contactRef.current);
+      }
 
-      // For finer control, you can also track scroll position and enable/disable snap
+      // Optimize scroll handler
+      let ticking = false;
       const handleScroll = () => {
-        const scrollPos = window.scrollY;
-        const workspacePos = workspaceRef.current?.offsetTop || 0;
-        // const aboutmePos = aboutMeRef.current?.offsetTop || 0;
-        // const heroPos = heroRef.current?.offsetTop || 0;
-        const contactPos = contactRef.current?.offsetTop || 0;
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            const scrollPos = window.scrollY;
+            const workspacePos = workspaceRef.current?.offsetTop || 0;
+            const contactPos = contactRef.current?.offsetTop || 0;
+            // const aboutmePos = aboutMeRef.current?.offsetTop || 0;
+            // const heroPos = heroRef.current?.offsetTop || 0;
 
-        if (
-          // Math.abs(scrollPos - heroPos) > 400 &&
-          Math.abs(scrollPos - workspacePos) > 400 &&
-          // Math.abs(scrollPos - aboutmePos) > 400 &&
-          Math.abs(scrollPos - contactPos) > 400
-        ) {
-          snap.stop();
-        } else {
-          snap.start();
+            if (
+              Math.abs(scrollPos - workspacePos) > 400 &&
+              Math.abs(scrollPos - contactPos) > 400
+            ) {
+              snap.stop();
+            } else {
+              snap.start();
+            }
+            ticking = false;
+          });
+          ticking = true;
         }
       };
 
-      window.addEventListener("scroll", handleScroll);
+      window.addEventListener("scroll", handleScroll, { passive: true });
       return () => window.removeEventListener("scroll", handleScroll);
     }
-  }, [lenis]);
+  }, [lenis, isMobile]);
 
   const cursorX = useMotionValue(0);
   const cursorY = useMotionValue(0);
@@ -87,39 +111,33 @@ export default function Home() {
   });
 
   const handleMouseScreen = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (isMobile) return; // Disable on mobile
+
     const rect = event.currentTarget.getBoundingClientRect();
     const { clientX, clientY } = event;
 
-    // Calculate the cursor position relative to the container
-    const x = ((clientX - rect.left) / rect.width) * 200 - 100;
-    const y = ((clientY - rect.top) / rect.height) * 200 - 100;
+    // Throttle calculations
+    requestAnimationFrame(() => {
+      const x = ((clientX - rect.left) / rect.width) * 200 - 100;
+      const y = ((clientY - rect.top) / rect.height) * 200 - 100;
 
-    // Ensure the values are within the range of -100 to 100
-    const clampedX = Math.max(-100, Math.min(100, x));
-    const clampedY = Math.max(-100, Math.min(100, y));
+      const clampedX = Math.max(-100, Math.min(100, x));
+      const clampedY = Math.max(-100, Math.min(100, y));
 
-    // Set the motion values
-    cursorX.set(clampedX);
-    cursorY.set(clampedY);
+      cursorX.set(clampedX);
+      cursorY.set(clampedY);
+    });
   };
 
   const scrollToSection = (scrollref: string) => () => {
-    switch (scrollref) {
-      case "aboutme":
-        aboutMeRef.current?.scrollIntoView({ behavior: "smooth" });
-        break;
-      case "workspace":
-        workspaceRef.current?.scrollIntoView({ behavior: "smooth" });
-        break;
-      case "contact":
-        contactRef.current?.scrollIntoView({ behavior: "smooth" });
-        break;
-      case "hero":
-        heroRef.current?.scrollIntoView({ behavior: "smooth" });
-        break;
-      default:
-        break;
-    }
+    const ref = {
+      aboutme: aboutMeRef,
+      workspace: workspaceRef,
+      contact: contactRef,
+      hero: heroRef,
+    }[scrollref];
+
+    ref?.current?.scrollIntoView({ behavior: isMobile ? "auto" : "smooth" });
   };
 
   return (
@@ -146,24 +164,32 @@ export default function Home() {
       >
         <motion.div
           style={{
-            rotateX: useTransform(cursorY, [-100, 100], [-2, 2]),
-            rotateY: useTransform(cursorX, [-100, 100], [5, -5]),
-            translateX: useTransform(cursorX, [-100, 100], [-10, 10]),
+            rotateX: useTransform(
+              cursorY,
+              [-100, 100],
+              cursorHeroAnimationConfig.rotateX
+            ),
+            rotateY: useTransform(
+              cursorX,
+              [-100, 100],
+              cursorHeroAnimationConfig.rotateY
+            ),
+            translateX: useTransform(
+              cursorX,
+              [-100, 100],
+              cursorHeroAnimationConfig.translateX
+            ),
             translateY: useTransform(
-              scrollYProgressWorkspace,
+              isTablet || isMobile
+                ? new MotionValue<number>()
+                : scrollYProgressWorkspace,
               [1, 0],
               ["100%", "0%"]
             ),
             filter: useTransform(
               cursorX,
               [-100, -50, 0, 50, 100],
-              [
-                "blur(20px)",
-                "blur(5px)",
-                "blur(0px)",
-                "blur(5px)",
-                "blur(10px)",
-              ]
+              cursorHeroAnimationConfig.blur
             ),
 
             scale: 1.05,
@@ -173,9 +199,11 @@ export default function Home() {
           <Image
             src="/bg.jpg"
             alt="background"
-            width={2908}
-            height={1638}
+            width={isMobile ? 1454 : 2908}
+            height={isMobile ? 819 : 1638}
             className="h-full w-full object-cover object-bottom"
+            priority
+            quality={isMobile ? 75 : 90}
           />
         </motion.div>
         <motion.div
@@ -184,7 +212,9 @@ export default function Home() {
             rotateY: useTransform(cursorX, [-100, 100], [15, -15]),
             translateX: useTransform(cursorX, [-100, 100], ["0%", "3%"]),
             translateY: useTransform(
-              scrollYProgressWorkspace,
+              isTablet || isMobile
+                ? new MotionValue<number>()
+                : scrollYProgressWorkspace,
               [1, 0],
               ["100%", "0%"]
             ),
@@ -207,7 +237,7 @@ export default function Home() {
             rotateY: useTransform(cursorX, [-100, 0, 100], [10, 0, -10]),
             translateX: useTransform(cursorX, [-100, 100], ["0vw", "-3vw"]),
             translateY: useTransform(
-              cursorY,
+              isTablet || isMobile ? new MotionValue<number>() : cursorY,
               [-100, 0, 100],
               ["3vh", "0vh", "3vh"]
             ),
