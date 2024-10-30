@@ -180,10 +180,8 @@ export default function Home() {
               cursorHeroAnimationConfig.translateX
             ),
             translateY: useTransform(
-              isTablet || isMobile
-                ? new MotionValue<number>()
-                : scrollYProgressWorkspace,
-              [1, 0],
+              scrollYProgressWorkspace,
+              [isTablet || isMobile ? 0 : 1, 0],
               ["100%", "0%"]
             ),
             filter: useTransform(
@@ -212,10 +210,8 @@ export default function Home() {
             rotateY: useTransform(cursorX, [-100, 100], [15, -15]),
             translateX: useTransform(cursorX, [-100, 100], ["0%", "3%"]),
             translateY: useTransform(
-              isTablet || isMobile
-                ? new MotionValue<number>()
-                : scrollYProgressWorkspace,
-              [1, 0],
+              scrollYProgressWorkspace,
+              [isTablet || isMobile ? 0 : 1, 0],
               ["100%", "0%"]
             ),
 
@@ -231,16 +227,18 @@ export default function Home() {
             className="h-full w-full object-cover"
           />
         </motion.div>
+
         <motion.div
           style={{
             rotateX: useTransform(cursorY, [-100, 100], [-10, 10]),
             rotateY: useTransform(cursorX, [-100, 0, 100], [10, 0, -10]),
             translateX: useTransform(cursorX, [-100, 100], ["0vw", "-3vw"]),
             translateY: useTransform(
-              isTablet || isMobile ? new MotionValue<number>() : cursorY,
+              cursorY,
               [-100, 0, 100],
               ["3vh", "0vh", "3vh"]
             ),
+            display: isMobile || isTablet ? "none" : "block",
           }}
           className="plant z-10 absolute left-0 h-full w-full pointer-events-none"
         >

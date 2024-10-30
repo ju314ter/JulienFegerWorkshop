@@ -24,10 +24,13 @@ import { data, SlideItem } from "@/data/projects";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import Link from "next/link";
 import { useExtractColors } from "react-extract-colors";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 const Workspace = () => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isTablet = useMediaQuery("(max-width: 1024px)");
+
   const workspaceSliderRef = useRef<HTMLDivElement>(null);
-  const [viewportBelowMd, isViewportBelowMd] = useState(false);
   const [sliderData, setSliderData] = useState<SlideItem[]>(data);
   const [sliderWidth, setSliderWidth] = useState(0);
   const sliderOffset = useMotionValue(0);
@@ -149,7 +152,6 @@ const Workspace = () => {
         const parentWidth =
           workspaceSliderRef.current?.parentElement?.clientWidth || 0;
         setSliderWidth(containerWidth - parentWidth / 2);
-        isViewportBelowMd(window.innerWidth < 1024);
       }, 150); // Debounce resize events
     };
 
@@ -185,7 +187,7 @@ const Workspace = () => {
             visible: { translateX: 0 },
             hidden: { translateX: "-200%" }, // Adjust the translation value as needed
           }}
-          animate={hideSortSlider && !viewportBelowMd ? "hidden" : "visible"}
+          animate={hideSortSlider && !isMobile ? "hidden" : "visible"}
           className="h-[90%] w-[60%] mx-auto md:w-full flex flex-col justify-between md:grid-rows-1 gap-2 md:gap-10 text-xl md:ml-[2vw]"
         >
           <div className="flex flex-col flex-1 gap-2 justify-between wrap">
@@ -246,7 +248,7 @@ const Workspace = () => {
                   onPageSelected={setDetailPageName}
                   isPageSelected={detailPageName === project.name}
                   isDragging={isDragging}
-                  isViewportBelowMd={viewportBelowMd}
+                  isViewportBelowMd={isTablet || isMobile}
                 />
               </motion.li>
             ))}
