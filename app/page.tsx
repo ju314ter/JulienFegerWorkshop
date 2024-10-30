@@ -354,9 +354,9 @@ export default function Home() {
           <DraggableCards />
         </section>
 
-        <div className="text-white mt-[5vh] w-full max-w-[60vw] mx-auto">
+        {/* <div className="text-white mt-[5vh] w-full max-w-[60vw] mx-auto">
           tech i use for work/fun
-        </div>
+        </div> */}
       </motion.div>
 
       {/* Contact me section */}
