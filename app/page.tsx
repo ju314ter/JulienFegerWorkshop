@@ -256,7 +256,7 @@ export default function Home() {
           style={{
             translateY: useTransform(
               scrollYProgressWorkspace,
-              [1, 0],
+              [isTablet || isMobile ? 0 : 1, 0],
               ["100%", "0%"]
             ),
             opacity: useTransform(scrollYProgressWorkspace, [0.4, 0], [0, 1]),
