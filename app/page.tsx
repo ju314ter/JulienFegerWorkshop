@@ -2,13 +2,7 @@
 
 import { ButtonLink } from "@/components/ui/button";
 import Image from "next/image";
-import {
-  useMotionValue,
-  useTransform,
-  motion,
-  useScroll,
-  MotionValue,
-} from "framer-motion";
+import { useMotionValue, useTransform, motion, useScroll } from "framer-motion";
 import { useEffect, useRef } from "react";
 import Workspace from "@/components/section/workspace";
 import Logo from "@/components/ui/logo";
@@ -367,9 +361,8 @@ export default function Home() {
             </div>
             <div className="w-full align-left text-2xl leading-10">
               En tant que développeur, cela fait plus de 4ans que je pratique le
-              design, tant graphique que technique, et le clean-code afin de
-              produire une solution élégante et créative, que ce soit pour mes
-              projets perso ou pour le boulot.
+              design, tant graphique que technique, ainsi que le clean-code afin
+              de produire une solution élégante et créative.
             </div>
             <div className="w-full align-left text-2xl leading-10">
               Je suis passionné de nouvelles technologies, mais également très

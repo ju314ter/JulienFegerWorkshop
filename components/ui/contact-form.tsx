@@ -38,6 +38,9 @@ const ContactForm: React.FC = () => {
     console.log("Name:", data.role);
     console.log("Email:", data.contact);
     console.log("Message:", data.message);
+
+    // send me a mail with poolpulse gmail app ?
+
     isMessageSent(true);
     reset();
   };
@@ -289,7 +292,9 @@ const ContactForm: React.FC = () => {
         </motion.form>
       </div>
       {/* animated div on message sent */}
-      <motion.div className="absolute"></motion.div>
+      <motion.div className="absolute">
+        {/* if sentMessage = true, animate the div */}
+      </motion.div>
     </div>
   );
 };
