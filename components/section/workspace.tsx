@@ -584,127 +584,6 @@ const ProjectCard = React.memo<{
 );
 ProjectCard.displayName = "ProjectCard";
 
-// const ProjectCard: React.FC<{
-//   project: SlideItem;
-//   positionPercent: MotionValue<number>;
-//   onPageSelected: (name: string) => void;
-//   isPageSelected: boolean;
-//   isDragging: boolean;
-// }> = ({
-//   project,
-//   positionPercent,
-//   onPageSelected,
-//   isPageSelected,
-//   isDragging,
-// }) => {
-//   const imageRef = useRef<HTMLImageElement>(null);
-//   const offset = useTransform(positionPercent, [0, 1], [30, 70]);
-//   const { dominantColor, lighterColor } = useExtractColors(project.imgHeroUrl, {
-//     format: "hex",
-//   });
-
-//   useMotionValueEvent(offset, "change", (x) => {
-//     if (imageRef.current) {
-//       imageRef.current.style.objectPosition = `${x}%`;
-//     }
-//   });
-
-//   const handleProjectSelected = () => {
-//     onPageSelected(project.name);
-//   };
-
-//   return (
-//     <div
-//       className="card group relative flex justify-center h-full w-[90%] rounded-md"
-//       onClick={() => (!isDragging ? handleProjectSelected() : null)}
-//       data-flip-key={project.name}
-//     >
-//       <Image
-//         ref={imageRef}
-//         src={project.imgHeroUrl}
-//         alt={project.description}
-//         width={1200}
-//         height={800}
-//         draggable={false}
-//         className={`absolute z-10 top-0 left-0 h-full object-cover rounded-md`}
-//       />
-//       {!isPageSelected && (
-//         <>
-//           <div
-//             style={{ backgroundColor: dominantColor + "44 " || "" }}
-//             className={`absolute rounded-tl-md z-0 py-5 w-full border-md top-0 opacity-0 scale-50 group-hover:translate-y-[-105%] group-hover:scale-100 group-hover:opacity-100 flex flex-col items-center justify-center transition-all duration-300`}
-//           >
-//             <span className="text-white text-3xl flex justify-center items-center text-center">
-//               {project.titre}
-//             </span>
-//             <span className="text-white text-xl">{project.framework}</span>
-//           </div>
-//           <div
-//             style={{ backgroundColor: dominantColor + "44" || "" }}
-//             className="absolute rounded-tl-md z-0 py-5 w-full border-md bottom-0 opacity-0 scale-50 group-hover:translate-y-[105%] group-hover:scale-100 group-hover:opacity-100 flex flex-col items-center justify-center transition-all duration-300"
-//           >
-//             <span className="text-white text-2xl">{project.role}</span>
-//           </div>
-//         </>
-//       )}
-//     </div>
-//   );
-// };
-
-// const ProjectCandle: React.FC<{
-//   index: number;
-//   velocityPercent: MotionValue<number>;
-//   positionPercent: MotionValue<number>;
-//   totalItems: number;
-// }> = ({ index, velocityPercent, positionPercent, totalItems }) => {
-//   const baseHeight = 16;
-//   const height = useMotionValue(baseHeight);
-//   const minScale = 1; // Minimum scale value
-//   const maxScale = 10; // Maximum scale value
-
-//   const motionIndex = useMotionValue(index);
-//   const indexPercent = useTransform(motionIndex, [0, totalItems], [0, 1]);
-
-//   const scalingFactor = useMotionValue(
-//     minScale +
-//       (maxScale - minScale) *
-//         (1 - Math.abs(indexPercent.get() - positionPercent.get()))
-//   );
-
-//   const violet = (saturation: number) => `hsl(340, ${saturation}%, 75%)`;
-//   const backgroundColor = useTransform(
-//     scalingFactor,
-//     [minScale, maxScale],
-//     [violet(0), violet(100)]
-//   );
-//   const opacity = useTransform(scalingFactor, [minScale, maxScale], [0, 0.5]);
-
-//   useMotionValueEvent(velocityPercent, "change", (x) => {
-//     // Apply the scaling factor to the range
-//     const scale =
-//       minScale +
-//       (maxScale - minScale) *
-//         (1 - Math.abs(indexPercent.get() - positionPercent.get()));
-
-//     scalingFactor.set(scale);
-//     height.set(baseHeight + x * scale * scale);
-//   });
-
-//   return (
-//     <motion.div
-//       style={{
-//         height,
-//         transformOrigin: "center bottom",
-//         backgroundColor,
-//         opacity,
-//       }}
-//       className="text-white flex grow w-12 overflow-hidden p-2 border-t-2 border-white"
-//     >
-//       <span className="relative top-4">{index}</span>
-//     </motion.div>
-//   );
-// };
-
 const ProjectCandle = React.memo<{
   index: number;
   velocityPercent: MotionValue<number>;
@@ -758,7 +637,6 @@ const ProjectCandle = React.memo<{
     </motion.div>
   );
 });
-
 ProjectCandle.displayName = "ProjectCandle";
 
 export default Workspace;

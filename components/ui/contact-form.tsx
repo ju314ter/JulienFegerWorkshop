@@ -163,23 +163,34 @@ const ContactForm: React.FC = () => {
     <div className="relative w-[95%] md:w-[80%] lg:w-[60%] h-[60%] flex flex-col bg-black/50 backdrop-blur-xl rounded-tl-md rounded-tr-md shadow-xl font-mono">
       <div className="relative h-10 w-full bg-[#121728] rounded-tl-md rounded-tr-md flex justify-center">
         <div className="absolute top-0 left-0 w-24 h-full flex justify-center items-center gap-2 rounded-tl-md">
-          <div className="w-4 h-4 rounded-full bg-red-500 cursor-pointer"></div>
-          <div className="w-4 h-4 rounded-full bg-orange-500 cursor-pointer"></div>
+          <div
+            className="w-4 h-4 rounded-full bg-red-500 cursor-pointer"
+            onClick={() => {
+              reset();
+            }}
+          ></div>
+          {/* <div
+            className="w-4 h-4 rounded-full bg-orange-500 cursor-pointer"
+            onClick={() => {
+              alert("empty all form fields");
+            }}
+          ></div> */}
           <div
             className="w-4 h-4 rounded-full bg-green-500 cursor-pointer"
-            onClick={() => alert("reset form")}
+            onClick={() => isMessageSent(false)}
           ></div>
         </div>
         <div className="h-full flex justify-center items-center text-white">
           julien.feger@gmail.com
         </div>
       </div>
-      <div className="p-4 flex flex-col grow w-full justify-between text-white overflow-hidden">
+      <div className="relative flex flex-col grow w-full justify-between text-white overflow-hidden">
         <motion.form
           initial={{ opacity: 1, y: 0 }}
           animate={messageSent ? { opacity: 0, y: -100 } : { opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
           onSubmit={handleSubmit(onSubmit)}
-          className="h-full w-full flex flex-col justify-start"
+          className="h-full w-full flex flex-col justify-start p-4"
         >
           <div className="flex justify-start items-center min-h-16">
             <Label htmlFor="name" className="text-md lg:text-2xl">
@@ -290,11 +301,32 @@ const ContactForm: React.FC = () => {
             </Button>
           </div>
         </motion.form>
+        {/* animated div on message sent */}
+        <motion.div
+          animate={messageSent ? "visible" : "hidden"}
+          variants={{
+            visible: { translateY: 0, borderRadius: "0%" },
+            hidden: { translateY: "200%", borderRadius: "50%" }, // Adjust the translation value as needed
+          }}
+          transition={{ duration: 0.7 }}
+          className="absolute bg-purple-700 h-full w-full"
+        >
+          <motion.div
+            animate={messageSent ? "visible" : "hidden"}
+            variants={{
+              visible: { opacity: 1 },
+              hidden: { opacity: 0 },
+            }}
+            transition={{ delay: 0.7 }}
+            className="absolute inset-0 flex justify-center items-center"
+          >
+            <p>
+              Message envoyé ! Je reviens vers vous le plus vite possible :)
+            </p>
+          </motion.div>
+          {/* if sentMessage = true, animate the div */}
+        </motion.div>
       </div>
-      {/* animated div on message sent */}
-      <motion.div className="absolute">
-        {/* if sentMessage = true, animate the div */}
-      </motion.div>
     </div>
   );
 };
