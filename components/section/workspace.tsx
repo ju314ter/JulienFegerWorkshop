@@ -27,8 +27,12 @@ import { useExtractColors } from "react-extract-colors";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 const Workspace = () => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useMediaQuery("(max-width: 700px)");
   const isTablet = useMediaQuery("(max-width: 1024px)");
+
+  useEffect(() => {
+    console.log("viewport", isMobile, isTablet);
+  }, [isMobile, isTablet]);
 
   const workspaceSliderRef = useRef<HTMLDivElement>(null);
   const [sliderData, setSliderData] = useState<SlideItem[]>(data);
@@ -176,7 +180,9 @@ const Workspace = () => {
 
   // update sort slider visibility on slider drag
   useMotionValueEvent(sliderOffset, "change", (x) => {
-    return x < -100 ? setHideSortSlider(true) : setHideSortSlider(false);
+    const condition = x < -100;
+    console.log(condition);
+    return condition ? setHideSortSlider(true) : setHideSortSlider(false);
   });
 
   return (

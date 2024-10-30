@@ -39,22 +39,18 @@ export default function Home() {
       contactRef.current
     ) {
       const snap = new Snap(lenis, {
-        type: isMobile ? "mandatory" : "proximity",
+        type: "proximity",
         velocityThreshold: isMobile ? 0.3 : 0.5,
         lerp: isMobile ? 0.1 : 0.05,
         duration: isMobile ? 0.8 : 1,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       });
 
-      // Only add snap points on non-mobile
-
       // snap.addElement(heroRef.current);
       // snap.addElement(aboutMeRef.current);
       // snap.add(aboutMeRef.current.offsetTop + 100);
-      if (!isMobile) {
-        snap.addElement(workspaceRef.current);
-        snap.addElement(contactRef.current);
-      }
+      snap.addElement(workspaceRef.current);
+      snap.addElement(contactRef.current);
 
       // Optimize scroll handler
       let ticking = false;
@@ -131,7 +127,7 @@ export default function Home() {
       hero: heroRef,
     }[scrollref];
 
-    ref?.current?.scrollIntoView({ behavior: isMobile ? "auto" : "smooth" });
+    ref?.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
