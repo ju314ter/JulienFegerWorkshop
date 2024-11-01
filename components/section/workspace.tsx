@@ -188,7 +188,7 @@ const Workspace = () => {
             hidden: { translateX: "-200%" }, // Adjust the translation value as needed
           }}
           animate={hideSortSlider && !isMobile ? "hidden" : "visible"}
-          className="h-[90%] w-[60%] mx-auto md:w-full flex flex-col justify-between md:grid-rows-1 gap-2 md:gap-10 text-xl md:ml-[2vw]"
+          className="h-[75%] w-[60%] mx-auto md:w-full flex flex-col justify-between md:grid-rows-1 gap-2 md:gap-10 text-xl md:ml-[2vw]"
         >
           <div className="flex flex-col flex-1 gap-2 justify-between wrap">
             <ButtonSort
@@ -225,7 +225,7 @@ const Workspace = () => {
           onDragEnd={() => debouncedSetDragging(false)}
           dragConstraints={{ left: -sliderWidth, right: 0 }}
           style={{ x: sliderOffset }}
-          className="scrollable-projects-wrapper overflow-visible h-[90%] inline-flex items-center"
+          className="scrollable-projects-wrapper overflow-visible h-[75%] inline-flex items-center"
         >
           <motion.ul
             initial={{ opacity: 0, y: "20%" }}
@@ -238,7 +238,7 @@ const Workspace = () => {
                 layout
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className={cn(
-                  "rounded item group text-white min-w-[250px] bg-transparent h-full cursor-grab flex justify-center",
+                  "rounded item group text-white min-w-[170px] bg-transparent h-full cursor-grab flex justify-center",
                   detailPageName === project.name && "z-20"
                 )}
               >
