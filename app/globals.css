@@ -82,7 +82,7 @@
 }
 
 .noise {
-  z-index: 5000;
+  z-index: 50;
   width: 100vw;
   height: 100vh;
   display: block;
@@ -92,6 +92,7 @@
   left: 0%;
   right: 0%;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .noise:after {
@@ -100,7 +101,7 @@
   will-change: transform;
   animation: noiseAnimation 1s steps(4) infinite;
   opacity: 0.5;
-  background-image: url("/noiseviolet4.png");
+  background-image: url("/noiseviolet5.png");
   width: 200%;
   height: 200%;
   display: block;

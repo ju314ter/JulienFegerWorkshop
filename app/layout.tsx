@@ -29,7 +29,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans h-[100vh] bg-neutral-950 antialiased relative`}
       >
-        <div className="noise pointer-events-none"></div>
         {children}
       </body>
     </html>

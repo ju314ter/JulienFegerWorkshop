@@ -152,6 +152,7 @@ export default function Home() {
         onMouseMove={handleMouseScreen}
         className="hero-section relative overflow-hidden h-[100vh] w-full flex flex-col items-center justify-start perspective-deep"
       >
+        <div className="noise pointer-events-none"></div>
         <motion.div
           style={{
             rotateX: useTransform(
@@ -274,10 +275,8 @@ export default function Home() {
       <motion.div
         className="w-full relative h-[100vh] flex flex-col items-center overflow-hidden border-t-2 border-white"
         style={{
-          background:
-            "linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.9)), url('/projectbackground-min1.jpg')",
+          background: "url('/projectbackground-min-saturated.jpg')",
           backgroundSize: "cover",
-          filter: "brigthness(0.1)",
         }}
         id="showcase"
         ref={workspaceRef}
@@ -298,7 +297,7 @@ export default function Home() {
         ref={aboutMeRef}
       >
         <div className="w-full h-full text-white flex flex-col items-center justify-start">
-          <div className="relative example-5 mt-[5vh] max-w-[60vw]">
+          <div className="relative example-5 mt-[5vh] max-w-[70vw] md:max-w-[50vw]">
             <motion.div
               style={{
                 opacity: useTransform(
@@ -351,7 +350,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="col mt-[5vh] w-full max-w-[60vw] mx-auto">
+          <div className="col mt-[5vh] w-full max-w-[50vw] mx-auto">
             <div className="w-full align-left text-4xl mb-10">
               Je suis un développeur français basé à Nantes, France.
             </div>
